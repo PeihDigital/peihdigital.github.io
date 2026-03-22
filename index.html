@@ -1201,7 +1201,6 @@ body.doraemon-mode .image-flipper {
      isDartCooldown: false
     }; 
     // --- LOGIC NHẬN DIỆN NGÔN NGỮ MÁY CHUẨN ---
-changeLang(currentLang, true);
 let currentLang = 'en'; 
 try {
     let savedLang = localStorage.getItem('peih_lang');
@@ -1216,6 +1215,7 @@ try {
     const sysLang = navigator.language || navigator.userLanguage;
     currentLang = sysLang.startsWith('vi') ? 'vi' : (sysLang.startsWith('ja') ? 'ja' : 'en');
 }
+changeLang(currentLang, true);
 // ------------------------------------------
 
     let activeEggTimeouts = [];
