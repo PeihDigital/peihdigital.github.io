@@ -3006,7 +3006,8 @@ async function triggerBlurEgg(isFromAI = false) {
         const img = document.getElementById('main-profile-pic'); 
         return img ? img.src : ''; 
     }
-    function appendSystemMsg(text) { const html = `<div class="system-bubble">${text}</div>`; chatBox.innerHTML += html; chatBox.scrollTop = chatBox.scrollHeight; }
+    function appendSystemMsg(text) { const html = `<div class="system-bubble">${text}</div>`; chatBox.insertAdjacentHTML('beforeend', html); chatBox.scrollTop = chatBox.scrollHeight; }
+
 
     // Thêm tham số autoSync = false ở cuối
 // Trả lại tham số gốc ban đầu
