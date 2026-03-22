@@ -1200,7 +1200,23 @@ body.doraemon-mode .image-flipper {
      isSneezing: false,
      isDartCooldown: false
     }; 
-    let currentLang = 'vi';
+    // --- LOGIC NHẬN DIỆN NGÔN NGỮ MÁY CHUẨN ---
+let currentLang = 'en'; 
+try {
+    let savedLang = localStorage.getItem('peih_lang');
+    if (savedLang) {
+        currentLang = savedLang; 
+    } else {
+        const sysLang = navigator.language || navigator.userLanguage;
+        currentLang = sysLang.startsWith('vi') ? 'vi' : (sysLang.startsWith('ja') ? 'ja' : 'en');
+        localStorage.setItem('peih_lang', currentLang);
+    }
+} catch (e) {
+    const sysLang = navigator.language || navigator.userLanguage;
+    currentLang = sysLang.startsWith('vi') ? 'vi' : (sysLang.startsWith('ja') ? 'ja' : 'en');
+}
+// ------------------------------------------
+
     let activeEggTimeouts = [];
 // --- 1. KHỞI TẠO TÀI KHOẢN VÀ BỘ NHỚ TRƯỚC ---
     let currentSessionId = 'Guest_' + Math.random().toString(36).substr(2, 6).toUpperCase();
@@ -2870,60 +2886,65 @@ async function triggerBlurEgg(isFromAI = false) {
         inputField.focus(); resetAfkTimer();
     }
 
-    function changeLang(lang) {
-      currentLang = lang;
-      const langMap = { 'vi': '🇻🇳 VI', 'en': '🇺🇸 EN', 'ja': '🇯🇵 JP' };
-      document.getElementById('current-lang-display').innerText = langMap[lang];
-      activePrivacyMenus = [];      // Reset danh sách menu
-      activePrivacyContents = {};   // Reset nội dung đang xem
-      introPrivacyId = null;        // Reset ID lời chào
-      isPrivacyLocked = false;      // Mở khóa bấm (nếu đang bị khóa 5s)
-      document.documentElement.style.setProperty('--dora-bread-text', `'${translations[lang].cssBread}'`);
+    function changeLang(lang, isInit = false) {
+  currentLang = lang;
+  try { localStorage.setItem('peih_lang', lang); } catch(e) {} 
+  
+  const langMap = { 'vi': '🇻🇳 VI', 'en': '🇺🇸 EN', 'ja': '🇯🇵 JP' };
+  document.getElementById('current-lang-display').innerText = langMap[lang];
+  activePrivacyMenus = [];      
+  activePrivacyContents = {};   
+  introPrivacyId = null;        
+  isPrivacyLocked = false;      
+  document.documentElement.style.setProperty('--dora-bread-text', `'${translations[lang].cssBread}'`);
 
-      document.getElementById('footer-text').innerHTML = translations[lang].footerText;
-      document.getElementById('sub-title').innerText = translations[lang].sub;
-      document.getElementById('bot-status').innerText = document.body.classList.contains('doraemon-mode') ? (lang === 'ja' ? "ドラえもん 🔔" : "Doraemon 🔔") : translations[lang].status;
-      document.getElementById('bot-disclaimer').innerText = translations[lang].disclaimer; 
-      document.getElementById('cap-1').innerHTML = translations[lang].cap1;
-      document.getElementById('cap-2').innerHTML = translations[lang].cap2;
+  document.getElementById('footer-text').innerHTML = translations[lang].footerText;
+  document.getElementById('sub-title').innerText = translations[lang].sub;
+  document.getElementById('bot-status').innerText = document.body.classList.contains('doraemon-mode') ? (lang === 'ja' ? "ドラえもん 🔔" : "Doraemon 🔔") : translations[lang].status;
+  document.getElementById('bot-disclaimer').innerText = translations[lang].disclaimer; 
+  document.getElementById('cap-1').innerHTML = translations[lang].cap1;
+  document.getElementById('cap-2').innerHTML = translations[lang].cap2;
 
-      document.getElementById('welcome-1').innerText = translations[lang].welcome1;
-      document.getElementById('welcome-2').innerText = translations[lang].welcome2;
-      document.getElementById('logout-1').innerText = translations[lang].logout1;
-      document.getElementById('logout-2').innerText = translations[lang].logout2;
-      document.getElementById('logout-3').innerText = translations[lang].logout3;
-      document.getElementById('logout-4').innerText = translations[lang].logout4;
-      document.getElementById('thought-cloud').innerText = translations[lang].fakeCloud1;
-      document.getElementById('pocket-title').innerText = translations[lang].pocketTitle;
-      document.getElementById('pocket-hint').innerText = translations[lang].pocketHint;
-      document.getElementById('map-title').innerText = translations[lang].mapTitle;
-      document.getElementById('map-l1').innerHTML = translations[lang].mapL1;
-      document.getElementById('map-l2').innerHTML = translations[lang].mapL2;
-      document.getElementById('map-l3').innerHTML = translations[lang].mapL3;
-      document.getElementById('map-l4').innerHTML = translations[lang].mapL4;
-      document.getElementById('map-hint').innerText = translations[lang].mapHint;
-      document.getElementById('door-title').innerText = translations[lang].doorTitle;
-      document.getElementById('tv-off-btn').innerText = translations[lang].tvOff;
-      document.getElementById('bread-title').innerText = translations[lang].breadTitle;
-      document.getElementById('book-title').innerText = translations[lang].bookTitle;
-      document.getElementById('book-name').placeholder = translations[lang].bookNameHold;
-      document.getElementById('book-note').placeholder = translations[lang].bookNoteHold;
-      document.getElementById('book-submit-btn').innerText = translations[lang].bookSubmit;
-      document.getElementById('menu-threads-text').innerText = translations[lang].threadTitle;
-      document.getElementById('header-threads-text').innerText = translations[lang].threadTitle;
-      document.getElementById('floating-back-text').innerText = translations[lang].threadBackBtn;
+  document.getElementById('welcome-1').innerText = translations[lang].welcome1;
+  document.getElementById('welcome-2').innerText = translations[lang].welcome2;
+  document.getElementById('logout-1').innerText = translations[lang].logout1;
+  document.getElementById('logout-2').innerText = translations[lang].logout2;
+  document.getElementById('logout-3').innerText = translations[lang].logout3;
+  document.getElementById('logout-4').innerText = translations[lang].logout4;
+  document.getElementById('thought-cloud').innerText = translations[lang].fakeCloud1;
+  document.getElementById('pocket-title').innerText = translations[lang].pocketTitle;
+  document.getElementById('pocket-hint').innerText = translations[lang].pocketHint;
+  document.getElementById('map-title').innerText = translations[lang].mapTitle;
+  document.getElementById('map-l1').innerHTML = translations[lang].mapL1;
+  document.getElementById('map-l2').innerHTML = translations[lang].mapL2;
+  document.getElementById('map-l3').innerHTML = translations[lang].mapL3;
+  document.getElementById('map-l4').innerHTML = translations[lang].mapL4;
+  document.getElementById('map-hint').innerText = translations[lang].mapHint;
+  document.getElementById('door-title').innerText = translations[lang].doorTitle;
+  document.getElementById('tv-off-btn').innerText = translations[lang].tvOff;
+  document.getElementById('bread-title').innerText = translations[lang].breadTitle;
+  document.getElementById('book-title').innerText = translations[lang].bookTitle;
+  document.getElementById('book-name').placeholder = translations[lang].bookNameHold;
+  document.getElementById('book-note').placeholder = translations[lang].bookNoteHold;
+  document.getElementById('book-submit-btn').innerText = translations[lang].bookSubmit;
+  document.getElementById('menu-threads-text').innerText = translations[lang].threadTitle;
+  document.getElementById('header-threads-text').innerText = translations[lang].threadTitle;
+  document.getElementById('floating-back-text').innerText = translations[lang].threadBackBtn;
 
-      if (document.getElementById('carousel-list').innerHTML !== '') renderCarousel();
+  if (document.getElementById('carousel-list').innerHTML !== '') renderCarousel();
 
-      document.getElementById('send-btn').innerText = isAppSleeping ? translations[currentLang].wakeBtn : translations[currentLang].sendBtn; 
-      statusNote.innerText = quotes[(quoteIndex === 0 ? quotes.length - 1 : quoteIndex - 1)][currentLang];
+  document.getElementById('send-btn').innerText = isAppSleeping ? translations[currentLang].wakeBtn : translations[currentLang].sendBtn; 
+  statusNote.innerText = quotes[(quoteIndex === 0 ? quotes.length - 1 : quoteIndex - 1)][currentLang];
+
+  if (!isInit) {
       if (window.isSystemHalted) {
-          chatBox.innerHTML = ''; // Xóa khung chat cũ
-          appendSystemMsg(getDynamicSystemLostMsg()); // In lại lỗi với ngôn ngữ mới ưu tiên lên đầu
+          chatBox.innerHTML = ''; 
+          appendSystemMsg(getDynamicSystemLostMsg()); 
           inputField.disabled = true; 
           sendBtn.disabled = true;
           inputField.placeholder = translations[currentLang].disconnected; 
-          return;}
+          return;
+      }
       chatContextHistory = []; localStorage.removeItem('peih_context_' + currentSessionId);
       chatBox.innerHTML = ''; userMessageBuffer = []; currentBubblesContainer = null; previousReceiptDiv = null;
       document.getElementById('thought-cloud').classList.add('hidden');
@@ -2942,7 +2963,6 @@ async function triggerBlurEgg(isFromAI = false) {
         appendSystemMsg(translations[currentLang].sleepMsg);
       } else {
         inputField.disabled = true; sendBtn.disabled = true;  
-        // Chèn logic kiểm tra xem đã có tên khách chưa để cập nhật placeholder
         if (window.currentRealName && window.currentRealName.trim() !== "") {
             inputField.placeholder = translations[currentLang].placeholderWithName.replace('{name}', window.currentRealName);
         } else {
@@ -2951,10 +2971,12 @@ async function triggerBlurEgg(isFromAI = false) {
         startAutoChat();
       }
       if (isHotlineMode) {
-    document.getElementById('btn-end-call').innerText = translations[lang].btnEndCall;
-    document.getElementById('user-input').placeholder = translations[lang].tinCanPlaceholder;
+          document.getElementById('btn-end-call').innerText = translations[lang].btnEndCall;
+          document.getElementById('user-input').placeholder = translations[lang].tinCanPlaceholder;
+      }
+  }
 }
-    }
+
     function toggleFullscreen() {
         const wrapper = document.getElementById('main-chat-wrapper');
         const icon = document.getElementById('fs-icon');
@@ -3138,6 +3160,7 @@ function getDynamicSystemLostMsg() {
     window.isSystemHalted = false;
 
     document.addEventListener('DOMContentLoaded', () => {
+      changeLang(currentLang, true);
       checkNightTimeForCoffee(); inputField.placeholder = translations[currentLang].connecting; 
       document.documentElement.style.setProperty('--dora-bread-text', `'${translations[currentLang].cssBread}'`);
 
