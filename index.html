@@ -921,6 +921,61 @@ body.doraemon-mode .image-flipper {
     0% { opacity: 1; transform: translateY(0) scale(1); }
     100% { opacity: 0; transform: translateY(60px) scale(0.95); }
 }
+    /* ================= SECRET MESSAGE UI ================= */
+.direct-msg-glow:focus-within { 
+    box-shadow: 0 0 20px 5px rgba(16, 185, 129, 0.4) !important; /* Xanh ngọc Emerald */
+    border-color: #10b981 !important; 
+}
+.secret-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 10px;
+    margin-bottom: 15px;
+    background: var(--bot-msg-bg);
+    color: var(--text-main);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    animation: floatCloud 2.1s ease-in-out infinite;
+    z-index: 20;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+/* Đuôi bong bóng giống y hệt đám mây ngủ nhưng đổi vị trí sang trái */
+.secret-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 20px;
+    width: 12px;
+    height: 12px;
+    background: var(--bot-msg-bg);
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* <-- THÊM BÓNG ĐỔ Ở ĐÂY */
+}
+.secret-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 10px;
+    width: 6px;
+    height: 6px;
+    background: var(--bot-msg-bg);
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* <-- THÊM BÓNG ĐỔ Ở ĐÂY */
+}
+.secret-tooltip.show {
+    opacity: 1;
+    visibility: visible;
+}
   </style>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -1070,9 +1125,12 @@ body.doraemon-mode .image-flipper {
             <canvas id="visualizer-canvas" style="width: 100%; height: 100%; filter: blur(1px);"></canvas>
           </div>
           
-          <input id="user-input" type="text" enterkeyhint="send" placeholder="Đang kết nối..." disabled
-                 class="flex-1 bg-transparent border-none outline-none text-[16px] text-gray-800 placeholder-gray-500 font-normal disabled:opacity-50 disabled:cursor-not-allowed"
-                 onkeypress="if(event.key === 'Enter') handleMainAction()" oninput="handleInputTyping()">
+          <div id="secret-tooltip" class="secret-tooltip">Chat với Peih AI, hoặc gõ @ để gửi tin ẩn danh cho Hòa Hiệp.</div>
+<input id="user-input" type="text" enterkeyhint="send" placeholder="Đang kết nối..." disabled
+       class="flex-1 bg-transparent border-none outline-none text-[16px] text-gray-800 placeholder-gray-500 font-normal disabled:opacity-50 disabled:cursor-not-allowed"
+       onkeypress="if(event.key === 'Enter') handleMainAction()" 
+       onfocus="hideSecretTooltip()" 
+       oninput="handleInputTyping()">
           
           <div id="thought-cloud" class="thought-cloud hidden">Peih đang lén ngủ...</div>
 
@@ -1585,7 +1643,7 @@ function appendRealAdminMsgToUI(text) {
         tm_year0: "Lần đầu tiên học code...", tm_year1: "Chạy deadline sấp mặt 🥲", tm_year2: "Làm việc tại quán cafe quen", tm_year3: "Tạo ra Digital Twin này! ✨",
         tinCanHeader: "☎️ ĐANG NỐI MÁY VỚI HOÀ HIỆP", tinCanDivider: "🥫———— ĐƯỜNG DÂY ĐÃ KẾT NỐI ————🥫", tinCanEnd: "✂️ Đã cắt dây. Quay lại Peih.", btnEndCall: "CẮT DÂY", tinCanPlaceholder: "Nhắn trực tiếp cho Hoà Hiệp...", placeholderWithName: "{name} cứ hỏi Peih nha...",
         threadTitle: "Dòng thời gian", threadLoading: "Đang tải dòng thời gian...", threadEmpty: "Chưa có dòng thời gian nào.", threadError: "Mạng lag, không tải được dòng thời gian rồi! 🐢", threadPinned: "Đã ghim", threadCommentPlaceholder: "Viết bình luận...", threadSendBtn: "Gửi", threadBackBtn: "Trở lại",
-        syncingData: "Đang đồng bộ dữ liệu...", disconnected: "Đã ngắt kết nối...",reconnecting: "Đã có mạng, đang kết nối lại...", reconnectFailed: "Vẫn chưa kết nối được máy chủ..."
+        syncingData: "Đang đồng bộ dữ liệu...", disconnected: "Đã ngắt kết nối...",reconnecting: "Đã có mạng, đang kết nối lại...", reconnectFailed: "Vẫn chưa kết nối được máy chủ...", secretTooltip: "Chat với Peih AI, hoặc gõ @ để gửi tin ẩn danh cho Hòa Hiệp.", secretPlaceholder: "Gửi ẩn danh cho Hòa Hiệp...", secretSuccess: "Xong! Mình vừa chuyển lời nhắn của bạn cho 'sếp' Hòa Hiệp rồi. Bí mật này chỉ hai người biết thôi nhé!"
       },
       ja: { 
         sub: "ミニマリスト | スポーツ | テック愛好家", status: "Peih AI とチャット", disclaimer: "デジタル表現 – 本人ではありません。", 
@@ -1636,7 +1694,7 @@ function appendRealAdminMsgToUI(text) {
         baoBoi_trans_bread: "ほんやくコンニャク", baoBoi_time_machine: "タイムマシン", baoBoi_anywhere_door: "どこでもドア", baoBoi_computer_pencil: "コンピューターペンシル", baoBoi_dressup_camera: "着せ替えカメラ", baoBoi_time_kerchief: "タイムふろしき", baoBoi_dream_tv: "夢テレビ", baoBoi_booking_diary: "予定メモ帳", baoBoi_personality_pill: "性格カプセル", baoBoi_truth_pepper: "コエカタマリン", baoBoi_tin_can_phone: "糸電話", baoBoi_treasure_map: "宝探し地図",
         tm_year0: "初めてコードを学んだ時...", tm_year1: "締め切りに追われる日々 🥲", tm_year2: "おなじみのカフェで作業", tm_year3: "このデジタルツインを作成した！✨",
         tinCanHeader: "☎️ ホア・ヒエップに接続中", tinCanDivider: "🥫———— 糸電話が繋がりました ————🥫", tinCanEnd: "✂️ 通話終了。Peihに戻ります。", btnEndCall: "糸を切る", tinCanPlaceholder: "ホア・ヒエップに直接メッセージ...", placeholderWithName: "{name}さん、何でも聞いて...",
-        threadTitle: "タイムライン", threadLoading: "タイムラインを読み込み中...", threadEmpty: "タイムラインがありません。", threadError: "ネットワーク遅延、読み込めませんでした！ 🐢", threadPinned: "固定済み", threadCommentPlaceholder: "コメントを書く...", threadSendBtn: "送信",threadBackBtn: "戻る",syncingData: "データを同期中...", disconnected: "切断されました...", reconnecting: "ネットワーク復旧、再接続中...", reconnectFailed: "サーバーに接続できません..."
+        threadTitle: "タイムライン", threadLoading: "タイムラインを読み込み中...", threadEmpty: "タイムラインがありません。", threadError: "ネットワーク遅延、読み込めませんでした！ 🐢", threadPinned: "固定済み", threadCommentPlaceholder: "コメントを書く...", threadSendBtn: "送信",threadBackBtn: "戻る",syncingData: "データを同期中...", disconnected: "切断されました...", reconnecting: "ネットワーク復旧、再接続中...", reconnectFailed: "サーバーに接続できません...", secretTooltip: "Peih AI とチャットするか、@ を入力してホア・ヒエップに匿名送信します。", secretPlaceholder: "ホア・ヒエップに匿名で送信...", secretSuccess: "完了！「ボス」のホア・ヒエップにメッセージを転送しました。これは二人だけの秘密ですよ！"
       },
       en: { 
         sub: "Minimalist | Sports | Tech Enthusiast", status: "Chat with Peih AI", disclaimer: "Digital Representation – Not the physical individual.", 
@@ -1687,7 +1745,7 @@ function appendRealAdminMsgToUI(text) {
         baoBoi_trans_bread: "Translation Bread", baoBoi_time_machine: "Time Machine", baoBoi_anywhere_door: "Anywhere Door", baoBoi_computer_pencil: "Computer Pencil", baoBoi_dressup_camera: "Dress-up Camera", baoBoi_time_kerchief: "Time Kerchief", baoBoi_dream_tv: "Dream TV", baoBoi_booking_diary: "Booking Diary", baoBoi_personality_pill: "Personality Pill", baoBoi_truth_pepper: "Truth Pepper", baoBoi_tin_can_phone: "Tin Can Phone", baoBoi_treasure_map: "Treasure Map",
         tm_year0: "Learning to code for the first time...", tm_year1: "Struggling with deadlines 🥲", tm_year2: "Working at the familiar cafe", tm_year3: "Created this Digital Twin! ✨",
         tinCanHeader: "☎️ CONNECTED TO HOA HIEP", tinCanDivider: "🥫———— STRING CONNECTED ————🥫", tinCanEnd: "✂️ Call ended. Back to Peih.", btnEndCall: "CUT WIRE", tinCanPlaceholder: "Message Hoa Hiep directly...", placeholderWithName: "{name}, ask Peih anything...",
-        threadTitle: "Timeline", threadLoading: "Loading timeline...", threadEmpty: "No timeline available.", threadError: "Network lag, couldn't load timeline! 🐢", threadPinned: "Pinned", threadCommentPlaceholder: "Write a comment...", threadSendBtn: "Send",threadBackBtn: "Back", syncingData: "Syncing data...", disconnected: "Disconnected...", reconnecting: "Network restored, reconnecting...", reconnectFailed: "Still unable to connect to server..."
+        threadTitle: "Timeline", threadLoading: "Loading timeline...", threadEmpty: "No timeline available.", threadError: "Network lag, couldn't load timeline! 🐢", threadPinned: "Pinned", threadCommentPlaceholder: "Write a comment...", threadSendBtn: "Send",threadBackBtn: "Back", syncingData: "Syncing data...", disconnected: "Disconnected...", reconnecting: "Network restored, reconnecting...", reconnectFailed: "Still unable to connect to server...", secretTooltip: "Chat with Peih AI, or type @ to secretly message Hoa Hiep.", secretPlaceholder: "Secretly message Hoa Hiep...", secretSuccess: "Done! I've forwarded your message to 'boss' Hoa Hiep. It's our little secret!"
       }
     };
 /* ================= PRIVACY & LEGAL LOGIC ================= */
@@ -2919,7 +2977,7 @@ async function triggerBlurEgg(isFromAI = false) {
   introPrivacyId = null;        
   isPrivacyLocked = false;      
   document.documentElement.style.setProperty('--dora-bread-text', `'${translations[lang].cssBread}'`);
-
+  document.getElementById('secret-tooltip').innerText = translations[lang].secretTooltip;
   document.getElementById('footer-text').innerHTML = translations[lang].footerText;
   document.getElementById('sub-title').innerText = translations[lang].sub;
   document.getElementById('bot-status').innerText = document.body.classList.contains('doraemon-mode') ? (lang === 'ja' ? "ドラえもん 🔔" : "Doraemon 🔔") : translations[lang].status;
@@ -3290,13 +3348,66 @@ function getDynamicSystemLostMsg() {
         }).getUIConfig();
     }
 
-    function handleInputTyping() {
-        if(userMessageBuffer.length > 0) {
-            clearTimeout(typingTimer); clearTimeout(inputIdleTimer);
-            inputIdleTimer = setTimeout(flushMessageBuffer, 7000); 
-        }
-        resetAfkTimer(); 
+    // --- BẮT ĐẦU ĐOẠN CODE THAY THẾ ---
+let lastInputValue = ""; 
+let hasSeenSecretTooltip = false; // Nhớ trạng thái khách đã xem chưa
+
+// Tự động quét: BUNG RA NGAY KHI MÀN HÌNH WELCOME BIẾN MẤT
+let tooltipCheckTimer = setInterval(() => {
+    const welcomeScreen = document.getElementById('welcome-screen');
+    
+    // Nếu màn hình chào đã ẩn, không phải gọi ống bơ, và khách chưa xem
+    if (welcomeScreen && welcomeScreen.classList.contains('hidden') && !isHotlineMode && !hasSeenSecretTooltip) {
+        document.getElementById('secret-tooltip').classList.add('show');
+        clearInterval(tooltipCheckTimer); // Bung xong là hủy hẹn giờ luôn
     }
+}, 500); // Quét liên tục mỗi nửa giây để bung ra nhanh nhất có thể
+
+function hideSecretTooltip() {
+    const tooltip = document.getElementById('secret-tooltip');
+    if (tooltip && tooltip.classList.contains('show')) {
+        tooltip.classList.remove('show');
+        hasSeenSecretTooltip = true; // Cất vĩnh viễn trong phiên chat này
+    }
+}
+
+function handleInputTyping() {
+    const inputEl = document.getElementById('user-input');
+    const glowContainer = inputEl.closest('.input-glow-container');
+    let val = inputEl.value;
+
+    // 1. TỰ ĐỘNG FORMAT @ VÀ SỬA LỖI VÒNG LẶP XOÁ
+    if (val === '@' || val === '@ ') {
+        inputEl.value = '@Hiệp: ';
+    } else if (val === '@Hiệp:' || val === '@Hiệp' || val === '@Hiệ' || val === '@Hi' || val === '@H') {
+        inputEl.value = ''; // Xoá chạm vào chữ -> xoá sạch ô
+    } else if (val.startsWith('@') && !val.startsWith('@Hiệp: ')) {
+        inputEl.value = '@Hiệp: ' + val.substring(1).trimStart();
+    }
+    
+    lastInputValue = inputEl.value;
+
+    // 2. Đổi viền Xanh Ngọc & Placeholder
+    if (inputEl.value.startsWith('@Hiệp: ')) {
+        glowContainer.classList.add('direct-msg-glow');
+        inputEl.placeholder = translations[currentLang].secretPlaceholder;
+    } else {
+        glowContainer.classList.remove('direct-msg-glow');
+        if (window.currentRealName && window.currentRealName.trim() !== "") {
+            inputEl.placeholder = translations[currentLang].placeholderWithName.replace('{name}', window.currentRealName);
+        } else {
+            inputEl.placeholder = translations[currentLang].placeholder;
+        }
+    }
+
+    // 3. Logic Gốc chống Spam
+    if(userMessageBuffer.length > 0) {
+        clearTimeout(typingTimer); clearTimeout(inputIdleTimer);
+        inputIdleTimer = setTimeout(flushMessageBuffer, 7000); 
+    }
+    resetAfkTimer(); 
+}
+// --- KẾT THÚC ĐOẠN CODE THAY THẾ ---
 
     // ĐÃ FIX LỖI 3: Tránh clear nhầm khi đang gõ lệnh nhạc
     async function handleChatSend() {
@@ -3361,7 +3472,35 @@ function getDynamicSystemLostMsg() {
       const typingId = 'typing-' + Date.now();
       chatBox.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="flex items-end gap-1.5 w-full mb-1 mt-4"><img src="${getAvatarUrl()}" class="w-8 h-8 rounded-full object-cover shrink-0 shadow-sm"><div class="rounded-[24px] px-4 py-3 flex gap-1 items-center shadow-sm h-[38px]" style="background-color: var(--bot-msg-bg); border: 1px solid var(--glass-border);"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`);
       chatBox.scrollTop = chatBox.scrollHeight;
+      // ==========================================
+      // GỬI TIN NHẮN ẨN DANH CHO HÒA HIỆP (BYPASS AI, BẮN TELEGRAM)
+      // ==========================================
+      if (combinedMessage.startsWith('@Hiệp: ')) {
+          const realSecretMsg = combinedMessage.substring(7).trim(); // Cắt bỏ chữ @Hiệp:
+          
+          // GỌI GOOGLE SCRIPT MỚI ĐỂ BẮN TELEGRAM VÀ LƯU SHEET NGẦM
+          google.script.run.sendSecretMessage(currentSessionId, realSecretMsg, clientCity || "Không rõ", clientLat, clientLon);
 
+          // Dọn UI
+          const typingEl = document.getElementById(typingId); if (typingEl) typingEl.remove();
+          inputField.disabled = false; sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].sendBtn; 
+          
+          // Trả màu viền Xanh ngọc về bình thường
+          const glowContainer = inputField.closest('.input-glow-container');
+          glowContainer.classList.remove('direct-msg-glow');
+          if (window.currentRealName && window.currentRealName.trim() !== "") {
+              inputField.placeholder = translations[currentLang].placeholderWithName.replace('{name}', window.currentRealName);
+          } else {
+              inputField.placeholder = translations[currentLang].placeholder;
+          }
+
+          inputField.focus(); resetAfkTimer();
+          
+          // Bot tự đáp câu thành công (không gọi Gemini)
+          appendBotMsg(translations[currentLang].secretSuccess, 0, 1, false, false);
+          return; // DỪNG LUÔN Ở ĐÂY!
+      }
+      
       // ==========================================
       // 1. NẾU ĐANG GỌI ỐNG BƠ HOẶC BỊ ADMIN CHẶN AI -> Bắn Firebase và DỪNG!
       // ==========================================
