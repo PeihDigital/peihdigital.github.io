@@ -4284,11 +4284,11 @@ function loadDailyStories() {
 }
 
 function openStory() {
-    // CHẶN BẤM: Nếu chưa mở Dòng thời gian thì cấm mở Story
-    if (!document.body.classList.contains('threads-active')) return;
-
+    if (!document.body.classList.contains('threads-active')) return; 
     if (currentStoryList.length === 0) return; 
-    if (typeof isBotBusy === 'function' && isBotBusy()) return;
+
+    const logoutOverlay = document.getElementById('logout-overlay');
+    if (logoutOverlay && logoutOverlay.classList.contains('active')) return;
 
     const bgAudio = document.getElementById('bg-audio');
     if (bgAudio && !bgAudio.paused) bgAudio.pause();
