@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <title>Peih | Digital Space</title>
   <link rel="icon" href="logo.jpg" type="image/jpeg">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com" defer></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+
   <style>
   /* ================= HIỆU ỨNG CHỮ CHẠY PING-PONG THÔNG MINH ================= */
 .marquee-container {
@@ -979,8 +984,8 @@ body.doraemon-mode .image-flipper {
     visibility: visible;
 }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js" defer></script>
 </head>
 <body>
   <button id="floating-back-btn" onclick="toggleThreads()" class="lg:hidden fixed top-4 left-4 z-[9999] backdrop-blur-md shadow-md rounded-full px-4 py-2.5 text-[14px] font-bold flex items-center gap-1.5 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4" style="color: var(--text-main); background: var(--glass-bg); border: 1px solid var(--glass-border);">
