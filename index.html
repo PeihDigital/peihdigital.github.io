@@ -8,6 +8,35 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
   <style>
+  /* ================= HIỆU ỨNG CHỮ CHẠY PING-PONG THÔNG MINH ================= */
+.marquee-container {
+    width: 100%;
+    overflow: hidden;
+    /* Lấy container này làm thước đo chiều ngang */
+    container-type: inline-size; 
+    /* Tạo hiệu ứng mờ (fade) 2 bên mép chữ */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+
+.marquee-text {
+    display: inline-block;
+    white-space: nowrap;
+    width: max-content;
+    /* Chạy qua lại mượt mà, dừng nghỉ ở 2 đầu */
+    animation: smartPingPong 4s ease-in-out infinite alternate;
+}
+
+@keyframes smartPingPong {
+    0%, 15% { transform: translateX(0); }
+    85%, 100% { 
+        /* Công thức ma thuật: Tự động tính toán phần chữ bị lòi ra. 
+           Nếu màn hình to đủ chỗ chứa chữ -> Đứng im (0px).
+           Nếu màn hình nhỏ -> Chỉ trượt đúng phần bị che lấp. */
+        transform: translateX(min(0px, calc(100cqw - 100%))); 
+    }
+}
+
 /* ================= THREADS UI - MƯỢT VÀ FIX LỖI KHOẢNG TRẮNG ================= */
 .area-chat {
     position: relative !important;
@@ -924,9 +953,11 @@ body.doraemon-mode .image-flipper {
         <img id="main-profile-pic" src="https://lh3.googleusercontent.com/u/0/d/1lJVY2i1LDSgWMUdrdTewoDH3bRg3Bksw" alt="Peih" class="w-full h-full object-cover relative z-0">
         <div id="glasses-overlay">👓</div>
       </div>
-      <div class="blur-target">
+            <div class="blur-target min-w-0 flex-1">
         <h1 class="text-4xl font-extrabold tracking-tight" style="color: var(--text-main)">Peih</h1>
-        <p id="sub-title" class="uppercase tracking-widest text-[11px] font-bold mt-2 whitespace-nowrap" style="color: var(--text-sub)">Tối giản | Thể thao | Đam mê công nghệ</p>
+        <div class="marquee-container mt-2">
+          <p id="sub-title" class="marquee-text uppercase tracking-widest text-[11px] font-bold" style="color: var(--text-sub)">Tối giản | Thể thao | Đam mê công nghệ</p>
+        </div>
         <p id="status-note" class="italic text-[12px] mt-1.5 font-semibold leading-tight">Loading thoughts...</p>
       </div>
     </div>
