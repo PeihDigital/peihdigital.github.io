@@ -1625,16 +1625,18 @@ function appendRealAdminMsgToUI(text) {
       const fetch3 = fetch('https://ipwho.is/').then(r=>r.json()).then(d => { if(d.success && d.latitude) return {lat: d.latitude, lon: d.longitude, city: d.city, name: 'ipwho'}; throw 3; });
 
       try {
-        // Phóng cả 3 đi cùng lúc, ai về đích đầu tiên thì lấy (Promise.any)
         const result = await Promise.any([fetch1, fetch2, fetch3]);
         clientLat = result.lat; 
         clientLon = result.lon; 
         clientCity = result.city || "một nơi nào đó";
+        
+        // --- THÊM DÒNG NÀY ---
+        // Ra lệnh cho Backend: "Lấy thời tiết sẵn đi sếp!"
+        google.script.run.prefetchWeather(clientLat, clientLon, currentLang);
+        
       } catch (error) {
          clientCity = "không biết";
-         clientLat = null;
-          clientLon = null;
-    }
+      }
     }
     fetchLocation();
     const quotes = [
