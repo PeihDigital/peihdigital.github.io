@@ -3935,6 +3935,8 @@ function handleInputTyping() {
       
     const now = new Date();
     const dayNames = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+    let h = now.getHours();
+    let buoi = h < 11 ? "Sáng" : (h < 14 ? "Trưa" : (h < 18 ? "Chiều" : (h < 22 ? "Tối" : "Đêm")));
     const clientTime = `${now.getHours()}:${now.getMinutes() < 10 ? '0' : ''}${now.getMinutes()}, ngày ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()} (${dayNames[now.getDay()]})`;
     const clientContext = { time: clientTime, lat: clientLat, lon: clientLon, city: clientCity, isDoraemon: document.body.classList.contains('doraemon-mode') };
 
