@@ -3622,7 +3622,7 @@ function getDynamicSystemLostMsg() {
           const maintEtaContainer = document.getElementById('maint-eta-container');
           
           if (config.lockEnd && config.lockEnd > 0) {
-              let lockText = { vi: "[MỞ LẠI: ", en: "[SYSTEM RESUME: ", ja: "[再起動予定: " }[currentLang];
+              let lockText = { vi: "[⏱️ MỞ LẠI: ", en: "[⏱️ SYSTEM RESUME: ", ja: "[⏱️ 再起動予定: " }[currentLang];
               const textEl = document.getElementById('lock-eta-text');
               if (textEl) textEl.innerText = lockText + formatETA(config.lockEnd) + "]";
               if (lockEtaContainer) lockEtaContainer.classList.remove('hidden');
