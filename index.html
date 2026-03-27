@@ -3536,13 +3536,31 @@ function getDynamicSystemLostMsg() {
     });
     
     html += "</span>";
-    html += `<button onclick="forceReconnect()" style="margin-top: 12px; padding: 6px 16px; background: var(--text-main); color: var(--bg-color); border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; transition: opacity 0.3s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">Thử lại / Retry</button>`;
+    html += `<button onclick="forceReconnect(this)" style="margin-top: 12px; padding: 6px 16px; background: var(--text-main); color: var(--bg-color); border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer; transition: opacity 0.3s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=1">Thử lại / Retry</button>`;
     return html;
 }
-    window.forceReconnect = function() {
-    const btn = document.querySelector('button[onclick="forceReconnect()"]');
-    if(btn) btn.style.display = 'none';
+    window.forceReconnect = function(btn) {
+    if (!navigator.onLine) {
+        if (btn) {
+            btn.innerHTML = '❌ Vẫn chưa có mạng!';
+            setTimeout(() => { if (btn) btn.innerHTML = 'Thử lại / Retry'; }, 2000);
+        }
+        return;
+    }
+    if (btn) {
+        btn.innerHTML = '⏳ Đang kết nối...';
+        btn.style.opacity = '0.6';
+        btn.style.pointerEvents = 'none'; 
+    }
     window.dispatchEvent(new Event('online'));
+
+    setTimeout(() => {
+        if (btn && document.body.contains(btn)) {
+            btn.innerHTML = 'Thử lại / Retry';
+            btn.style.opacity = '1';
+            btn.style.pointerEvents = 'auto'; 
+        }
+    }, 3000);
 }
     // Biến toàn cục để khóa hệ thống khi mất mạng
     window.isSystemHalted = false;
