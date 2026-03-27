@@ -1038,7 +1038,71 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
 .story-progress-fill {
     height: 100%; background: #fff; width: 0%; transform-origin: left;
 }
-
+/* --- HIỆU ỨNG BÁNH RĂNG MỚI --- */
+.m1-gear-bob {
+    animation: gearBob 1.5s ease-in-out infinite alternate;
+}
+.m1-gear-spin-glow {
+    filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.8));
+    animation: gearSpin 3s linear infinite; /* 3s trùng khớp đúng tốc độ vòng ngoài */
+}
+@keyframes gearBob {
+    0% { transform: translateY(6px); }
+    100% { transform: translateY(-6px); }
+}
+@keyframes gearSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); filter: drop-shadow(0 0 35px rgba(34, 197, 94, 1)); }
+}
+.matrix-code {
+    position: absolute;
+    color: rgba(34, 197, 94, 0.7); /* Chữ Matrix xanh lá */
+    font-family: monospace; font-weight: bold; font-size: 14px;
+    user-select: none; animation: matrixFall linear forwards;
+    text-shadow: 0 0 5px rgba(34, 197, 94, 0.8);
+}
+@keyframes matrixFall {
+    0% { transform: translateY(-30px); opacity: 0; }
+    10% { opacity: 1; }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(800px); opacity: 0; } 
+}
+/* --- HIỆU ỨNG SÓNG RADAR (BẢN TINH TẾ) --- */
+.m1-radar {
+    position: absolute;
+    inset: 0px; 
+    border: 1px solid rgba(34, 197, 94, 0.2); /* Viền mỏng 1px và siêu mờ (20%) */
+    border-radius: 50%;
+    opacity: 0;
+    animation: radarPing 5s cubic-bezier(0.25, 1, 0.5, 1) infinite; /* Chậm lại, nhịp 5 giây */
+}
+.m1-radar-2 {
+    animation-delay: 2.5s; /* Sóng 2 nối đuôi nhịp nhàng hơn */
+}
+@keyframes radarPing {
+    0% { transform: scale(0.8); opacity: 0; }
+    20% { opacity: 0.5; } /* Tối đa chỉ sáng 50% rồi mờ dần ngay */
+    100% { transform: scale(2.2); opacity: 0; } /* Chỉ tỏa ra vừa phải, không bung quá to */
+}
+/* --- HIỆU ỨNG MÀN HÌNH ĐANG THI CÔNG (GATEKEEPER) --- */
+.construction-icon {
+    animation: iconGlow 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.4));
+}
+@keyframes iconGlow {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.3)); }
+    50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.7)); }
+}
+.construction-stripes {
+    background-color: #facc15;
+    background-image: linear-gradient(45deg, #000 25%, transparent 25%, transparent 50%, #000 50%, #000 75%, transparent 75%, transparent);
+    background-size: 40px 40px;
+    animation: moveStripes 1s linear infinite;
+}
+@keyframes moveStripes {
+    from { background-position: 0 0; }
+    to { background-position: 40px 0; }
+}
   </style>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -1059,7 +1123,22 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
   </div>
 
   <div id="welcome-screen"><h1 class="reveal-text"><span id="welcome-1">Welcome to</span><br><span id="welcome-2">Peih's World.</span></h1></div>
-
+  
+  <div id="gatekeeper-screen" class="fixed inset-0 z-[9999999] bg-[#0a0a0a] backdrop-blur-2xl hidden flex-col items-center justify-center p-6 opacity-0 transition-opacity duration-1000">
+      <div class="bg-neutral-900/50 p-8 md:p-12 rounded-3xl border border-neutral-800 shadow-2xl flex flex-col items-center text-center max-w-lg w-full">
+          <div class="text-7xl mb-6 construction-icon">🚧</div>
+          <h1 class="text-3xl md:text-4xl font-black text-yellow-400 font-mono tracking-widest uppercase mb-2">Đang Thi Công</h1>
+          <h2 class="text-lg md:text-xl text-yellow-400/80 font-mono tracking-widest mb-1">UNDER CONSTRUCTION</h2>
+          <h3 class="text-base text-yellow-400/60 font-mono tracking-widest mb-8">改装中</h3>
+          
+          <div class="w-full h-6 construction-stripes rounded-md mb-8 border border-black shadow-inner"></div>
+          
+          <p class="text-neutral-300 font-light text-sm md:text-base leading-relaxed mb-2">Không gian kỹ thuật số của Peih đang được nâng cấp.</p>
+          <p class="text-neutral-400 font-light text-sm leading-relaxed mb-6">Peihのデジタルツインは現在アップグレード中です。</p>
+          
+          <p class="text-xs text-neutral-500 italic font-mono border-t border-neutral-800 pt-4 w-full">SYS_STATUS: [LOCKED] | AUTH_LEVEL: [0]</p>
+      </div>
+  </div>
   <div class="app-container">
     <div class="area-profile scroll-reveal">
       <div id="profile-avatar-ring" class="w-24 h-24 shrink-0 rounded-[32px] shadow-xl glow-interactive cursor-pointer relative" onclick="openStory()" ondblclick="triggerBlurEgg()">
@@ -1180,6 +1259,27 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
       <div class="relative w-full h-full flex flex-col overflow-hidden flex-1">
            <div id="master-sword" class="master-sword">🗡️</div>
            <div id="sb-coffee" class="sb-coffee-icon">☕</div>
+           <div id="maint-state-container" class="absolute inset-0 hidden flex-col items-center justify-center z-[5]" style="background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: inherit;">
+               
+               <div class="absolute flex items-center justify-center w-32 h-32 z-0 pointer-events-none mt-[-10px]">
+                   <div class="m1-radar"></div>
+                   <div class="m1-radar m1-radar-2"></div>
+               </div>
+
+               <div class="relative flex items-center justify-center w-32 h-32 z-10">
+                   <div class="absolute w-24 h-24 border-4 border-t-green-400 border-b-green-600 border-l-transparent border-r-transparent rounded-full animate-spin opacity-50" style="animation-duration: 3s;"></div>
+                   <div class="absolute w-16 h-16 border-4 border-l-green-500 border-r-green-400 border-t-transparent border-b-transparent rounded-full animate-spin opacity-70" style="animation-duration: 2s; animation-direction: reverse;"></div>
+                   <div class="absolute z-10 flex items-center justify-center m1-gear-bob">
+                       <div class="text-[40px] leading-none m1-gear-spin-glow">⚙️</div>
+                   </div>
+               </div>
+               <div id="maint-text-hint" class="sleep-text font-mono text-green-600 mt-2 font-bold z-10"></div>
+               
+               <div id="maint-terminal" class="absolute bottom-6 left-6 font-mono text-[10px] text-green-500/70 leading-[1.6] pointer-events-none z-10 w-full pr-12 flex flex-col justify-end h-[80px]" style="text-shadow: 0 0 4px rgba(34,197,94,0.5);">
+               </div>
+           </div>
+           
+           <div id="matrix-rain-container" class="absolute inset-0 pointer-events-none z-[6] overflow-hidden" style="border-radius: inherit;"></div>
 
            <div id="empty-sleep-state" class="absolute inset-0 hidden flex-col items-center justify-center pointer-events-none z-[5]">
              <div class="sleep-icon">🌙</div>
@@ -1372,6 +1472,108 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
     const thoughtCloud = document.getElementById('thought-cloud');
     const emptySleep = document.getElementById('empty-sleep-state');
     const dreamContainer = document.getElementById('dream-container');
+
+    // --- BẢO TRÌ M1 PRO LOGIC (CHUẨN NGỦ GIẢ) ---
+    let matrixTimer = null;
+    let terminalTimer = null; 
+    const terminalLogLines = []; 
+
+    function toggleM1Maintenance(isActive) {
+        const maintState = document.getElementById('maint-state-container');
+        const rainContainer = document.getElementById('matrix-rain-container');
+        const tooltip = document.getElementById('secret-tooltip'); // Lấy cái tooltip
+        
+        if (isActive) {
+            chatBox.innerHTML = '';
+            maintState.classList.remove('hidden');
+            maintState.classList.add('flex');
+            document.getElementById('maint-text-hint').innerText = translations[currentLang].maintHint;
+            
+            inputField.disabled = true;
+            inputField.placeholder = translations[currentLang].maintPlaceholder;
+            
+            sendBtn.disabled = true;
+            sendBtn.innerText = "...";
+            
+            // Đổi chấm thành ĐỎ theo ý ông
+            statusDot.className = 'w-3 h-3 bg-red-500 rounded-full pulse-anim shadow-[0_0_10px_#ef4444] shrink-0';
+            document.getElementById('bot-status').innerText = translations[currentLang].maintStatus;
+            
+            // TẮT ÉP TOOLTIP @
+            if (tooltip) tooltip.style.display = 'none'; 
+            
+            // BẬT MƯA MATRIX VÀ BẬT LUÔN TERMINAL LOG
+            if (!matrixTimer) matrixTimer = setInterval(spawnMatrixCode, 250);
+            if (!terminalTimer) terminalTimer = setInterval(spawnTerminalLog, 800);
+
+        } else {
+            maintState.classList.add('hidden');
+            maintState.classList.remove('flex');
+            
+            // DỌN DẸP MATRIX
+            clearInterval(matrixTimer);
+            matrixTimer = null;
+            if(rainContainer) rainContainer.innerHTML = '';
+            
+            // DỌN DẸP TERMINAL (Dừng chạy chữ và xóa mảng)
+            clearInterval(terminalTimer);
+            terminalTimer = null;
+            terminalLogLines.length = 0; 
+            const terminalEl = document.getElementById('maint-terminal');
+            if (terminalEl) terminalEl.innerHTML = '';
+            
+            // BẬT LẠI TOOLTIP KHI HẾT BẢO TRÌ
+            if (tooltip) tooltip.style.display = '';
+        }
+    }
+
+    function spawnMatrixCode() {
+        const container = document.getElementById('matrix-rain-container');
+        if (!container || container.childElementCount > 30) return; 
+        
+        const el = document.createElement('div');
+        el.className = 'matrix-code';
+        const codes = ["010", "101", "SYS", "0xFA", "M1", "110"]; 
+        el.innerText = codes[Math.floor(Math.random() * codes.length)];
+        
+        el.style.left = Math.random() * 100 + '%'; 
+        const duration = 2.5 + Math.random() * 3; 
+        el.style.animationDuration = duration + 's';
+        el.style.fontSize = (10 + Math.random() * 10) + 'px';
+        el.style.opacity = (Math.random() * 0.5 + 0.3).toString();
+        
+        container.appendChild(el);
+        setTimeout(() => { if (el.parentNode) el.remove(); }, duration * 1000);
+    }
+    function spawnTerminalLog() {
+        const terminal = document.getElementById('maint-terminal');
+        if (!terminal) return;
+        
+        const prefixes = ["SYS", "OK", "WARN", "INFO", "DEBUG"];
+        const phrases = [
+            "Rebuilding Neural Core...", "Clearing Cache [OK]", "Bypassing Security Protocol...", 
+            "Ping: 12ms", "Allocating RAM: 14.5GB", "[WARN] Temp rising: 82°C", 
+            "Syncing Database...", "Fetching User Matrix...", "Decrypting Local Storage...",
+            "Connecting to M1 Server..."
+        ];
+        
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const text = phrases[Math.floor(Math.random() * phrases.length)];
+        
+        // Đổi màu cho chữ [WARN] và [OK] để nhìn xịn hơn
+        let colorClass = "text-green-500/70";
+        if (prefix === "WARN") colorClass = "text-yellow-500/80";
+        if (prefix === "OK") colorClass = "text-cyan-500/80";
+
+        const line = `<span class="${colorClass}">[${prefix}] ${text}</span>`;
+        terminalLogLines.push(line);
+        
+        // Chỉ giữ lại 5 dòng mới nhất để không bị tràn khung
+        if (terminalLogLines.length > 5) terminalLogLines.shift(); 
+        
+        terminal.innerHTML = terminalLogLines.join('<br>');
+    }
+    // --- KẾT THÚC BẢO TRÌ M1 PRO LOGIC ---
 
     let currentPersonalityName = "";
     const uiState = {
@@ -1739,7 +1941,7 @@ function appendRealAdminMsgToUI(text) {
         tm_year0: "Lần đầu tiên học code...", tm_year1: "Chạy deadline sấp mặt 🥲", tm_year2: "Làm việc tại quán cafe quen", tm_year3: "Tạo ra Digital Twin này! ✨",
         tinCanHeader: "☎️ ĐANG NỐI MÁY VỚI HOÀ HIỆP", tinCanDivider: "🥫———— ĐƯỜNG DÂY ĐÃ KẾT NỐI ————🥫", tinCanEnd: "✂️ Đã cắt dây. Quay lại Peih.", btnEndCall: "CẮT DÂY", tinCanPlaceholder: "Nhắn trực tiếp cho Hoà Hiệp...", placeholderWithName: "{name} cứ hỏi Peih nha...",
         threadTitle: "Dòng thời gian", threadLoading: "Đang tải dòng thời gian...", threadEmpty: "Chưa có dòng thời gian nào.", threadError: "Mạng lag, không tải được dòng thời gian rồi! 🐢", threadPinned: "Đã ghim", threadCommentPlaceholder: "Viết bình luận...", threadSendBtn: "Gửi", threadBackBtn: "Trở lại",
-        syncingData: "Đang đồng bộ dữ liệu...", disconnected: "Đã ngắt kết nối...",reconnecting: "Đã có mạng, đang kết nối lại...", reconnectFailed: "Vẫn chưa kết nối được máy chủ...", secretTooltip: "Chat với Peih AI, hoặc gõ @ để gửi tin ẩn danh cho Hòa Hiệp.", secretPlaceholder: "Gửi ẩn danh cho Hòa Hiệp...", secretSuccess: "Xong! Mình vừa chuyển lời nhắn của bạn cho 'sếp' Hòa Hiệp rồi. Bí mật này chỉ hai người biết thôi nhé!"
+        syncingData: "Đang đồng bộ dữ liệu...", disconnected: "Đã ngắt kết nối...",reconnecting: "Đã có mạng, đang kết nối lại...", reconnectFailed: "Vẫn chưa kết nối được máy chủ...", secretTooltip: "Chat với Peih AI, hoặc gõ @ để gửi tin ẩn danh cho Hòa Hiệp.", secretPlaceholder: "Gửi ẩn danh cho Hòa Hiệp...", secretSuccess: "Xong! Mình vừa chuyển lời nhắn của bạn cho 'sếp' Hòa Hiệp rồi. Bí mật này chỉ hai người biết thôi nhé!", maintStatus: "HỆ THỐNG ĐANG BẢO TRÌ ⚙️", maintPlaceholder: "Đang nâng cấp lõi M1 Pro...", maintHint: "Đang dọn dẹp và cập nhật dữ liệu..."
       },
       ja: { 
         sub: "ミニマリスト | スポーツ | テック愛好家", status: "Peih AI とチャット (BETA)", disclaimer: "デジタル表現 – 本人ではありません。", 
@@ -1790,7 +1992,8 @@ function appendRealAdminMsgToUI(text) {
         baoBoi_trans_bread: "ほんやくコンニャク", baoBoi_time_machine: "タイムマシン", baoBoi_anywhere_door: "どこでもドア", baoBoi_computer_pencil: "コンピューターペンシル", baoBoi_dressup_camera: "着せ替えカメラ", baoBoi_time_kerchief: "タイムふろしき", baoBoi_dream_tv: "夢テレビ", baoBoi_booking_diary: "予定メモ帳", baoBoi_personality_pill: "性格カプセル", baoBoi_truth_pepper: "コエカタマリン", baoBoi_tin_can_phone: "糸電話", baoBoi_treasure_map: "宝探し地図",
         tm_year0: "初めてコードを学んだ時...", tm_year1: "締め切りに追われる日々 🥲", tm_year2: "おなじみのカフェで作業", tm_year3: "このデジタルツインを作成した！✨",
         tinCanHeader: "☎️ ホア・ヒエップに接続中", tinCanDivider: "🥫———— 糸電話が繋がりました ————🥫", tinCanEnd: "✂️ 通話終了。Peihに戻ります。", btnEndCall: "糸を切る", tinCanPlaceholder: "ホア・ヒエップに直接メッセージ...", placeholderWithName: "{name}さん、何でも聞いて...",
-        threadTitle: "タイムライン", threadLoading: "タイムラインを読み込み中...", threadEmpty: "タイムラインがありません。", threadError: "ネットワーク遅延、読み込めませんでした！ 🐢", threadPinned: "固定済み", threadCommentPlaceholder: "コメントを書く...", threadSendBtn: "送信",threadBackBtn: "戻る",syncingData: "データを同期中...", disconnected: "切断されました...", reconnecting: "ネットワーク復旧、再接続中...", reconnectFailed: "サーバーに接続できません...", secretTooltip: "Peih AI とチャットするか、@ を入力してホア・ヒエップに匿名送信します。", secretPlaceholder: "ホア・ヒエップに匿名で送信...", secretSuccess: "完了！「ボス」のホア・ヒエップにメッセージを転送しました。これは二人だけの秘密ですよ！"
+        threadTitle: "タイムライン", threadLoading: "タイムラインを読み込み中...", threadEmpty: "タイムラインがありません。", threadError: "ネットワーク遅延、読み込めませんでした！ 🐢", threadPinned: "固定済み", threadCommentPlaceholder: "コメントを書く...", threadSendBtn: "送信",threadBackBtn: "戻る",syncingData: "データを同期中...", disconnected: "切断されました...", reconnecting: "ネットワーク復旧、再接続中...", reconnectFailed: "サーバーに接続できません...", secretTooltip: "Peih AI とチャットするか、@ を入力してホア・ヒエップに匿名送信します。", secretPlaceholder: "ホア・ヒエップに匿名で送信...", secretSuccess: "完了！「ボス」のホア・ヒエップにメッセージを転送しました。これは二人だけの秘密ですよ！", maintStatus: "システムメンテナンス中 ⚙️",
+        maintPlaceholder: "M1 Proコアをアップグレード中...", maintHint: "システムデータを更新中..."
       },
       en: { 
         sub: "Minimalist | Sports | Tech Enthusiast", status: "Chat with Peih AI (BETA)", disclaimer: "Digital Representation – Not the physical individual.", 
@@ -1841,7 +2044,7 @@ function appendRealAdminMsgToUI(text) {
         baoBoi_trans_bread: "Translation Bread", baoBoi_time_machine: "Time Machine", baoBoi_anywhere_door: "Anywhere Door", baoBoi_computer_pencil: "Computer Pencil", baoBoi_dressup_camera: "Dress-up Camera", baoBoi_time_kerchief: "Time Kerchief", baoBoi_dream_tv: "Dream TV", baoBoi_booking_diary: "Booking Diary", baoBoi_personality_pill: "Personality Pill", baoBoi_truth_pepper: "Truth Pepper", baoBoi_tin_can_phone: "Tin Can Phone", baoBoi_treasure_map: "Treasure Map",
         tm_year0: "Learning to code for the first time...", tm_year1: "Struggling with deadlines 🥲", tm_year2: "Working at the familiar cafe", tm_year3: "Created this Digital Twin! ✨",
         tinCanHeader: "☎️ CONNECTED TO HOA HIEP", tinCanDivider: "🥫———— STRING CONNECTED ————🥫", tinCanEnd: "✂️ Call ended. Back to Peih.", btnEndCall: "CUT WIRE", tinCanPlaceholder: "Message Hoa Hiep directly...", placeholderWithName: "{name}, ask Peih anything...",
-        threadTitle: "Timeline", threadLoading: "Loading timeline...", threadEmpty: "No timeline available.", threadError: "Network lag, couldn't load timeline! 🐢", threadPinned: "Pinned", threadCommentPlaceholder: "Write a comment...", threadSendBtn: "Send",threadBackBtn: "Back", syncingData: "Syncing data...", disconnected: "Disconnected...", reconnecting: "Network restored, reconnecting...", reconnectFailed: "Still unable to connect to server...", secretTooltip: "Chat with Peih AI, or type @ to secretly message Hoa Hiep.", secretPlaceholder: "Secretly message Hoa Hiep...", secretSuccess: "Done! I've forwarded your message to 'boss' Hoa Hiep. It's our little secret!"
+        threadTitle: "Timeline", threadLoading: "Loading timeline...", threadEmpty: "No timeline available.", threadError: "Network lag, couldn't load timeline! 🐢", threadPinned: "Pinned", threadCommentPlaceholder: "Write a comment...", threadSendBtn: "Send",threadBackBtn: "Back", syncingData: "Syncing data...", disconnected: "Disconnected...", reconnecting: "Network restored, reconnecting...", reconnectFailed: "Still unable to connect to server...", secretTooltip: "Chat with Peih AI, or type @ to secretly message Hoa Hiep.", secretPlaceholder: "Secretly message Hoa Hiep...", secretSuccess: "Done! I've forwarded your message to 'boss' Hoa Hiep. It's our little secret!", maintStatus: "SYSTEM MAINTENANCE ⚙️", maintPlaceholder: "Upgrading M1 Pro core...",maintHint: "Updating system data..."
       }
     };
 /* ================= PRIVACY & LEGAL LOGIC ================= */
@@ -3077,7 +3280,8 @@ async function triggerBlurEgg(isFromAI = false) {
   document.getElementById('secret-tooltip').innerText = translations[lang].secretTooltip;
   document.getElementById('footer-text').innerHTML = translations[lang].footerText;
   document.getElementById('sub-title').innerText = translations[lang].sub;
-  document.getElementById('bot-status').innerText = document.body.classList.contains('doraemon-mode') ? (lang === 'ja' ? "ドラえもん 🔔" : "Doraemon 🔔") : translations[lang].status;
+  let isMaintMode = document.getElementById('maint-state-container') && document.getElementById('maint-state-container').classList.contains('flex');
+  document.getElementById('bot-status').innerText = document.body.classList.contains('doraemon-mode') ? (lang === 'ja' ? "ドラえもん 🔔" : "Doraemon 🔔") : (isMaintMode ? translations[lang].maintStatus : translations[lang].status);
   document.getElementById('bot-disclaimer').innerText = translations[lang].disclaimer; 
   document.getElementById('cap-1').innerHTML = translations[lang].cap1;
   document.getElementById('cap-2').innerHTML = translations[lang].cap2;
@@ -3105,10 +3309,15 @@ async function triggerBlurEgg(isFromAI = false) {
   document.getElementById('menu-threads-text').innerText = translations[lang].threadTitle;
   document.getElementById('header-threads-text').innerText = translations[lang].threadTitle;
   document.getElementById('floating-back-text').innerText = translations[lang].threadBackBtn;
-
+  const maintHintEl = document.getElementById('maint-text-hint');
+  if (maintHintEl) maintHintEl.innerText = translations[lang].maintHint;
   if (document.getElementById('carousel-list').innerHTML !== '') renderCarousel();
 
-  document.getElementById('send-btn').innerText = isAppSleeping ? translations[currentLang].wakeBtn : translations[currentLang].sendBtn; 
+  if (isMaintMode) {
+    document.getElementById('send-btn').innerText = "...";
+  } else {
+     document.getElementById('send-btn').innerText = isAppSleeping ? translations[currentLang].wakeBtn : translations[currentLang].sendBtn;
+  } 
   statusNote.innerText = quotes[(quoteIndex === 0 ? quotes.length - 1 : quoteIndex - 1)][currentLang];
 
   if (!isInit) {
@@ -3132,10 +3341,14 @@ async function triggerBlurEgg(isFromAI = false) {
       if (window.cachedThreadsData) {
           renderThreadsList(window.cachedThreadsData);
       }
-      if(isAppSleeping) {
-        inputField.placeholder = translations[currentLang].sleepPlaceholder;
-        appendBotMsg(translations[currentLang].sleepyMsg1, 0, 2); appendBotMsg(translations[currentLang].sleepyMsg2, 1, 2);
-        appendSystemMsg(translations[currentLang].sleepMsg);
+      if (isMaintMode) {
+          // NẾU ĐANG BẢO TRÌ: Chỉ đổi chữ, KHÔNG in bong bóng chat
+          inputField.placeholder = translations[currentLang].maintPlaceholder;
+      } else if(isAppSleeping) {
+          // NẾU LÀ NGỦ GIẢ: Mới in bong bóng chat
+          inputField.placeholder = translations[currentLang].sleepPlaceholder;
+          appendBotMsg(translations[currentLang].sleepyMsg1, 0, 2); appendBotMsg(translations[currentLang].sleepyMsg2, 1, 2);
+          appendSystemMsg(translations[currentLang].sleepMsg);
       } else {
         inputField.disabled = true; sendBtn.disabled = true;  
         if (window.currentRealName && window.currentRealName.trim() !== "") {
@@ -3391,17 +3604,52 @@ function getDynamicSystemLostMsg() {
 
           // TÁCH PAYLOAD THÀNH CONFIG VÀ THREADS Ở ĐÂY
           globalUIConfig = payload.uiConfig;
-          window.cachedThreadsData = payload.threadsData; // Nạp Threads thẳng vào RAM
+          window.cachedThreadsData = payload.threadsData; 
+          let config = payload.uiConfig; 
           
-          let config = payload.uiConfig; // Tạo lại biến config cho code cũ bên dưới chạy bình thường
+          // --- BẮT ĐẦU CODE KHÓA TỬ THẦN Ở ĐÂY ---
+          if(config.appStatus === "LOCK") {
+              // 1. Không ẩn Welcome screen vội, để cho chữ Peih World trồi lên cho đẹp
+              document.getElementById('welcome-screen').classList.remove('hidden');
+              
+              // 2. Canh đúng 4.5 giây (lúc chữ Peih trồi lên xong) thì sập rèm
+              setTimeout(() => {
+                  const gate = document.getElementById('gatekeeper-screen');
+                  if(gate) {
+                      gate.classList.remove('hidden');
+                      gate.classList.add('flex');
+                      setTimeout(() => gate.classList.remove('opacity-0'), 50); // Fade in mượt
+                  }
+                  
+                  // 3. CHIÊU SÁT THỦ: Hủy diệt hoàn toàn code HTML bên trong
+                  const appContainer = document.querySelector('.app-container');
+                  if (appContainer) appContainer.remove(); 
+                  
+                  document.body.style.overflow = 'hidden'; 
+              }, 4500); 
+              
+              return; // Chặn ngang tại đây, không cho load tin nhắn hay giao diện gì cả!
+          }
+          // --- KẾT THÚC CODE KHÓA TỬ THẦN ---
+
+          // Nếu không bị LOCK thì mới ẩn màn hình Welcome đi và chạy bình thường
           document.getElementById('welcome-screen').classList.add('hidden');
-          if(config.appStatus === "OFF") {
-             isAppSleeping = true; inputField.disabled = true; sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].wakeBtn;
+
+          if(config.appStatus === "MAINT") {
+             chatBox.innerHTML = ''; 
+             toggleM1Maintenance(true);
+             isAppSleeping = true;
+         } 
+         else if(config.appStatus === "OFF") {
+             toggleM1Maintenance(false);
+             isAppSleeping = true; 
+             inputField.disabled = true; sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].wakeBtn;
              inputField.placeholder = translations[currentLang].sleepPlaceholder; statusDot.className = 'w-3 h-3 bg-red-500 rounded-full shrink-0';
              await showTypingIndicator(1000, false); appendBotMsg(translations[currentLang].sleepyMsg1, 0, 2);
              await showTypingIndicator(1500, true); appendBotMsg(translations[currentLang].sleepyMsg2, 1, 2);
              setTimeout(() => { appendSystemMsg(translations[currentLang].sleepMsg); }, 1200);
-          } else {
+         } else {
+             toggleM1Maintenance(false); // Tắt màn hình bảo trì
              if(chatContextHistory.length > 0) {
                  window.isRestoringHistory = true;
                  chatContextHistory.forEach(msg => {
@@ -3418,7 +3666,7 @@ function getDynamicSystemLostMsg() {
                  chatBox.scrollTop = chatBox.scrollHeight; inputField.disabled = false; sendBtn.disabled = false;
                  inputField.placeholder = translations[currentLang].placeholder; resetAfkTimer();
              } else { inputField.disabled = true; sendBtn.disabled = true; startAutoChat(); }
-          }
+         }
         }).withFailureHandler(function() {
             window.isSystemHalted = true; // Cắm cờ sập hệ thống
             isConfigLoaded = true; 
@@ -3447,10 +3695,16 @@ function getDynamicSystemLostMsg() {
       currentBubblesContainer = null; if (currentReceiptDiv) { currentReceiptDiv.innerText = translations[currentLang].read; previousReceiptDiv = currentReceiptDiv; }
       google.script.run.withSuccessHandler(async function(payload) {
         let config = payload.uiConfig;
-            if (config.appStatus === "OFF") {
+            if (config.appStatus === "MAINT") {
+                toggleM1Maintenance(true);
+                isAppSleeping = true;
+            }
+            else if (config.appStatus === "OFF") {
+                toggleM1Maintenance(false);
                 await showTypingIndicator(1000, false); appendBotMsg(translations[currentLang].stillSleepingMsg);
                 sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].wakeBtn;
             } else {
+                toggleM1Maintenance(false);
                 isAppSleeping = false; inputField.disabled = false; sendBtn.disabled = false;
                 inputField.placeholder = translations[currentLang].placeholder; sendBtn.innerText = translations[currentLang].sendBtn;
                 statusDot.className = 'w-3 h-3 bg-green-500 rounded-full pulse-anim shadow-[0_0_10px_#22c55e] shrink-0';
@@ -3671,7 +3925,12 @@ function handleInputTyping() {
                 }, 400); 
             }
         }
-          
+        if (botResponse === "SYSTEM_MAINTENANCE_MODE") {
+            toggleM1Maintenance(true);
+            isAppSleeping = true;
+            chatContextHistory.pop(); 
+            return; 
+        }
         if (botResponse === "SYSTEM_SLEEP_MODE") {
             isAppSleeping = true; inputField.disabled = true; sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].wakeBtn;
             statusDot.className = 'w-3 h-3 bg-red-500 rounded-full shrink-0';
@@ -4201,7 +4460,12 @@ document.addEventListener('click', function(e) {
                 let config = payload.uiConfig;
                 globalUIConfig = config;
                 
-                if(config.appStatus === "OFF") {
+                if(config.appStatus === "MAINT") {
+             toggleM1Maintenance(true);
+             isAppSleeping = true;
+         } 
+         else if(config.appStatus === "OFF") {
+                     toggleM1Maintenance(false);
                      isAppSleeping = true; 
                      inputField.disabled = true; 
                      sendBtn.disabled = false; 
@@ -4212,7 +4476,9 @@ document.addEventListener('click', function(e) {
                      await showTypingIndicator(1500, true); appendBotMsg(translations[currentLang].sleepyMsg2, 1, 2);
                      setTimeout(() => { appendSystemMsg(translations[currentLang].sleepMsg); }, 1200);
                 } else {
+                     toggleM1Maintenance(false);
                      // Mở khóa UI, trở lại bình thường
+                     // (GIỮ NGUYÊN CODE CŨ CỦA ÔNG TỪ ĐOẠN inputField.disabled = false; TRỞ ĐI)
                      inputField.disabled = false; 
                      sendBtn.disabled = false;
                      sendBtn.innerText = translations[currentLang].sendBtn;
@@ -4224,7 +4490,6 @@ document.addEventListener('click', function(e) {
                          inputField.placeholder = translations[currentLang].placeholder;
                      }
                      
-                     // Nếu trắng trơn lịch sử chat thì gọi câu chào đầu tiên
                      if(chatContextHistory.length === 0) {
                          inputField.disabled = true; 
                          sendBtn.disabled = true; 
