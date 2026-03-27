@@ -1817,26 +1817,25 @@ function appendRealAdminMsgToUI(text) {
     let clientLat = null, clientLon = null, clientCity = null;
 
     async function fetchLocation() {
-      // Chuẩn bị 3 "vận động viên" chạy song song
-      const fetch1 = fetch('https://get.geojs.io/v1/ip/geo.json').then(r=>r.json()).then(d => { if(d.latitude) return {lat: d.latitude, lon: d.longitude, city: d.city || d.region, name: 'GeoJS'}; throw 1; });
-      const fetch2 = fetch('https://ipapi.co/json/').then(r=>r.json()).then(d => { if(d.latitude) return {lat: d.latitude, lon: d.longitude, city: d.city, name: 'ipapi'}; throw 2; });
-      const fetch3 = fetch('https://ipwho.is/').then(r=>r.json()).then(d => { if(d.success && d.latitude) return {lat: d.latitude, lon: d.longitude, city: d.city, name: 'ipwho'}; throw 3; });
+    if (sessionStorage.getItem('peih_tracked')) return;
 
-      try {
+    sessionStorage.setItem('peih_tracked', 'true');
+
+    const fetch1 = fetch('https://get.geojs.io/v1/ip/geo.json').then(r=>r.json()).then(d => { if(d.latitude) return {lat: d.latitude, lon: d.longitude, city: d.city || d.region, name: 'GeoJS'}; throw 1; });
+    const fetch2 = fetch('https://ipapi.co/json/').then(r=>r.json()).then(d => { if(d.latitude) return {lat: d.latitude, lon: d.longitude, city: d.city, name: 'ipapi'}; throw 2; });
+    const fetch3 = fetch('https://ipwho.is/').then(r=>r.json()).then(d => { if(d.success && d.latitude) return {lat: d.latitude, lon: d.longitude, city: d.city, name: 'ipwho'}; throw 3; });
+
+    try {
         const result = await Promise.any([fetch1, fetch2, fetch3]);
         clientLat = result.lat; 
         clientLon = result.lon; 
         clientCity = result.city || "một nơi nào đó";
-        
         google.script.run.prefetchWeather(clientLat, clientLon, currentLang);
-        
-      } catch (error) {
-         clientCity = "không biết";
-      }
-      const urlParams = new URLSearchParams(window.location.search);
-      const referer = urlParams.get('ref') || 'direct';
-      google.script.run.trackVisit(window.guestSource, clientCity, clientLat, clientLon);
+    } catch (error) {
+        clientCity = "không biết";
     }
+    google.script.run.trackVisit(window.guestSource, clientCity, clientLat, clientLon);
+}
     const quotes = [
       { vi: '"Cuộc đời không được suy xét là cuộc đời không đáng sống." - Socrates', en: '"The unexamined life is not worth living." - Socrates', ja: '"吟味なき生に、生きる価値なし。" - ソクラテス' },
       { vi: '"Nơi mà ngôn từ thất bại, âm nhạc sẽ lên tiếng." - Hans C. Andersen', en: '"Where words fail, music speaks." - Hans C. Andersen', ja: '"言葉が尽きたところで、音楽が始まる。" - アンデルセン' },
@@ -3549,6 +3548,9 @@ function getDynamicSystemLostMsg() {
           window.guestSource = ref;
           window.history.replaceState({}, document.title, window.location.pathname);
       }
+      setTimeout(() => {
+          fetchLocation(); 
+      }, 2500);
       loadDailyStories();
       checkNightTimeForCoffee(); inputField.placeholder = translations[currentLang].connecting; 
       document.documentElement.style.setProperty('--dora-bread-text', `'${translations[currentLang].cssBread}'`);
@@ -3607,9 +3609,6 @@ function getDynamicSystemLostMsg() {
           globalUIConfig = payload.uiConfig;
           window.cachedThreadsData = payload.threadsData; 
           let config = payload.uiConfig; 
-          setTimeout(() => {
-              fetchLocation();
-          }, 1000);
           const lockEtaContainer = document.getElementById('lock-eta-container');
           const maintEtaContainer = document.getElementById('maint-eta-container');
           
@@ -3969,8 +3968,6 @@ function handleInputTyping() {
         localStorage.setItem('peih_context_' + currentSessionId, JSON.stringify(chatContextHistory));
         inputField.disabled = false; sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].sendBtn; inputField.focus(); resetAfkTimer();
 
-        // ------ PHẦN LÀM SAU LƯNG KHÁCH (HẬU CẦN) ------
-        // Lưu Log của Bot
         setTimeout(() => {
             google.script.run.saveChatLogToSheet(currentSessionId, 'Peih AI', botResponse, clientCity || "Không rõ", clientLat, clientLon, false);
         }, 1000);
