@@ -1835,7 +1835,6 @@ function appendRealAdminMsgToUI(text) {
       }
       const urlParams = new URLSearchParams(window.location.search);
       const referer = urlParams.get('ref') || 'direct';
-      google.script.run.trackVisit(referer, clientCity, clientLat, clientLon);
       google.script.run.trackVisit(window.guestSource, clientCity, clientLat, clientLon);
     }
     const quotes = [
