@@ -1135,7 +1135,9 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
           
           <p class="text-neutral-300 font-light text-sm md:text-base leading-relaxed mb-2">Không gian kỹ thuật số của Peih đang được nâng cấp.</p>
           <p class="text-neutral-400 font-light text-sm leading-relaxed mb-6">Peihのデジタルツインは現在アップグレード中です。</p>
-          
+          <div id="lock-eta-container" class="hidden mb-6 px-4 py-2 bg-black/50 border border-yellow-500/30 rounded-lg shadow-[0_0_15px_rgba(234,179,8,0.1)]">
+          <span id="lock-eta-text" class="text-yellow-500 font-mono text-[13px] font-bold tracking-wider"></span>
+          </div>
           <p class="text-xs text-neutral-500 italic font-mono border-t border-neutral-800 pt-4 w-full">SYS_STATUS: [LOCKED] | AUTH_LEVEL: [0]</p>
       </div>
   </div>
@@ -1274,7 +1276,9 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
                    </div>
                </div>
                <div id="maint-text-hint" class="sleep-text font-mono text-green-600 mt-2 font-bold z-10"></div>
-               
+                <div id="maint-eta-container" class="hidden mt-1 z-10">
+                 <span id="maint-eta-text" class="text-green-500/70 font-mono text-[10px] font-bold tracking-widest"></span>
+               </div>
                <div id="maint-terminal" class="absolute bottom-6 left-6 font-mono text-[10px] text-green-500/70 leading-[1.6] pointer-events-none z-10 w-full pr-12 flex flex-col justify-end h-[80px]" style="text-shadow: 0 0 4px rgba(34,197,94,0.5);">
                </div>
            </div>
@@ -3593,7 +3597,16 @@ function getDynamicSystemLostMsg() {
               inputField.placeholder = translations[currentLang].disconnected; 
           }
       }, 10000);
-
+      // HÀM GỌT THỜI GIAN THÀNH ĐỊNH DẠNG HH:MM - DD/MM
+      function formatETA(timestamp) {
+          if (!timestamp || timestamp === 0) return "";
+          const d = new Date(timestamp);
+          const hrs = d.getHours().toString().padStart(2, '0');
+          const mins = d.getMinutes().toString().padStart(2, '0');
+          const day = d.getDate().toString().padStart(2, '0');
+          const month = (d.getMonth() + 1).toString().padStart(2, '0');
+          return `${hrs}:${mins} - ${day}/${month}`;
+      }
       google.script.run.withSuccessHandler(async function(payload) {
           isConfigLoaded = true; 
           clearTimeout(loadingTimer4s);
@@ -3606,7 +3619,24 @@ function getDynamicSystemLostMsg() {
           globalUIConfig = payload.uiConfig;
           window.cachedThreadsData = payload.threadsData; 
           let config = payload.uiConfig; 
+          // --- BẮT ĐẦU: XỬ LÝ IN GIỜ LÊN BẢNG ĐIỆN TỬ ---
+          const lockEtaContainer = document.getElementById('lock-eta-container');
+          const maintEtaContainer = document.getElementById('maint-eta-container');
           
+          if (config.lockEnd && config.lockEnd > 0) {
+              let lockText = { vi: "[MỞ LẠI: ", en: "[SYSTEM RESUME: ", ja: "[再起動予定: " }[currentLang];
+              const textEl = document.getElementById('lock-eta-text');
+              if (textEl) textEl.innerText = lockText + formatETA(config.lockEnd) + "]";
+              if (lockEtaContainer) lockEtaContainer.classList.remove('hidden');
+          }
+          
+          if (config.maintEnd && config.maintEnd > 0) {
+              let maintText = { vi: "> ETA_HOÀN_THÀNH: ", en: "> ETA_COMPLETION: ", ja: "> 完了予定時刻: " }[currentLang];
+              const textEl2 = document.getElementById('maint-eta-text');
+              if (textEl2) textEl2.innerText = maintText + formatETA(config.maintEnd);
+              if (maintEtaContainer) maintEtaContainer.classList.remove('hidden');
+          }
+          // --- KẾT THÚC: XỬ LÝ IN GIỜ LÊN BẢNG ĐIỆN TỬ ---
           // --- BẮT ĐẦU CODE KHÓA TỬ THẦN Ở ĐÂY ---
           if(config.appStatus === "LOCK") {
               // 1. Không ẩn Welcome screen vội, để cho chữ Peih World trồi lên cho đẹp
