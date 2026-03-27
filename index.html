@@ -4274,28 +4274,45 @@ function handleThreadLike(element, rowIndex) {
     const storageKey = `liked_thread_${rowIndex}`;
     if (localStorage.getItem(storageKey)) return; // Đã like rồi thì chặn luôn
 
-    // 1. Lưu trạng thái ngay lập tức
+    // 1. Lưu trạng thái ngay lập tức vào LocalStorage
     localStorage.setItem(storageKey, 'true');
 
     // 2. Tạo hiệu ứng rung tim & Đổi màu
     element.classList.remove('hover:text-red-500', 'text-gray-500');
     element.classList.add('text-red-500');
     const svg = element.querySelector('svg');
-    svg.setAttribute('fill', 'currentColor');
-    svg.style.transform = 'scale(1.3)';
-    setTimeout(() => svg.style.transform = 'scale(1)', 200);
-    
-    // 3. Cộng số an toàn từ biến Cache gốc (không sợ lỗi 2k + 1)
-    if (window.cachedThreadsData) {
-        let post = window.cachedThreadsData.find(p => p.rowIndex === rowIndex);
-        if (post) {
-            post.likes += 1; // Cộng vào data gốc
-            element.querySelector('.like-count').innerText = formatCount(post.likes); // Gắn chữ 2.1k lên UI
-        }
+    if (svg) {
+        svg.setAttribute('fill', 'currentColor');
+        svg.style.transform = 'scale(1.3)';
+        setTimeout(() => svg.style.transform = 'scale(1)', 200);
     }
 
-    // 4. Báo cho Sheets biết
-    google.script.run.addThreadLike(rowIndex);
+    // 3. XỬ LÝ CỘNG SỐ VÀ HIỂN THỊ LÊN UI (ĐÃ FIX LỖI)
+    const countSpan = element.querySelector('.like-count');
+    if (countSpan) {
+        let newLikes = 1; // Mặc định là 1 nếu trước đó là 0 hoặc chưa có ai like
+        
+        if (window.cachedThreadsData) {
+            let post = window.cachedThreadsData.find(p => p.rowIndex === rowIndex);
+            if (post) {
+                // BẮT BUỘC ÉP KIỂU NUMBER: Ngăn chặn lỗi cộng chuỗi từ Google Sheets
+                post.likes = (Number(post.likes) || 0) + 1; 
+                newLikes = post.likes;
+            }
+        } else {
+            // FALLBACK PHÒNG HỜ: Lấy thẳng số đang hiển thị trên UI cộng thêm 1
+            let currentText = countSpan.innerText.replace(/k/gi, '000').replace(/M/gi, '000000');
+            newLikes = (Number(currentText) || 0) + 1;
+        }
+
+        // Gắn số mới lên giao diện ngay lập tức
+        countSpan.innerText = formatCount(newLikes);
+    }
+
+    // 4. Báo cho Sheets biết chạy ngầm
+    if (typeof google !== 'undefined') {
+        google.script.run.addThreadLike(rowIndex);
+    }
 }
 
 // ==========================================
