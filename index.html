@@ -413,7 +413,7 @@ body.doraemon-mode .image-flipper {
     .area-profile { grid-area: profile; display: flex; align-items: center; gap: 0.75rem; position: relative; }
     .area-menu { grid-area: menu; } .area-images { grid-area: images; } .area-chat { grid-area: chat; }
     .image-caption { font-size: 0.875rem; color: var(--text-sub); text-align: center; margin-top: 0.75rem; font-weight: 500; }
-    #status-note { transition: opacity 0.8s ease-in-out; min-height: 1.25rem; color: var(--status-text); }
+    #status-note {transition: opacity 0.8s ease-in-out; height: 48px; color: var(--status-text); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;}
     
     .msg-bubble { padding: 10px 16px; max-width: 75%; font-size: 15px; line-height: 1.4; font-weight: 400; box-shadow: 0 1px 2px rgba(0,0,0,0.05); word-break: break-word; }
     .system-bubble { margin: 1rem auto; padding: 8px 20px; font-size: 13px; font-weight: 600; color: #ef4444; background: rgba(239, 68, 68, 0.1); border-radius: 20px; border: 1px solid rgba(239, 68, 68, 0.2); text-align: center; max-width: fit-content; }
