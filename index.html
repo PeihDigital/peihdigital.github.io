@@ -1836,14 +1836,15 @@ function appendRealAdminMsgToUI(text) {
         clientLon = result.lon; 
         clientCity = result.city || "một nơi nào đó";
         
-        // --- THÊM DÒNG NÀY ---
-        // Ra lệnh cho Backend: "Lấy thời tiết sẵn đi sếp!"
         google.script.run.prefetchWeather(clientLat, clientLon, currentLang);
         
       } catch (error) {
          clientCity = "không biết";
       }
-    }
+      const urlParams = new URLSearchParams(window.location.search);
+      const referer = urlParams.get('ref') || 'direct';
+      google.script.run.trackVisit(referer, clientCity, clientLat, clientLon);
+    } 
     fetchLocation();
     const quotes = [
       { vi: '"Cuộc đời không được suy xét là cuộc đời không đáng sống." - Socrates', en: '"The unexamined life is not worth living." - Socrates', ja: '"吟味なき生に、生きる価値なし。" - ソクラテス' },
@@ -3556,10 +3557,7 @@ function getDynamicSystemLostMsg() {
       const urlParams = new URLSearchParams(window.location.search);
       const referer = urlParams.get('ref');
       if (referer) {
-          google.script.run.trackVisit(referer);
           window.history.replaceState({}, document.title, window.location.pathname);
-      } else {
-          google.script.run.trackVisit('direct');
       }
 
       checkNightTimeForCoffee(); inputField.placeholder = translations[currentLang].connecting; 
