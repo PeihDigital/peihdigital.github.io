@@ -4725,16 +4725,22 @@ function prevStory() {
         showStoryItem(currentStoryIndex); 
     }
 }
+function checkAndLoadMore() {
+    if(isFetchingThreads || !hasMoreThreads || !document.body.classList.contains('threads-active')) return;
+    const feed = document.getElementById('threads-feed');
+    if(!feed) return;
+    let isBottom = false;
+    if(window.innerWidth < 1024) {
+        isBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 250);
+    } else {
+        isBottom = (feed.scrollHeight - feed.scrollTop - feed.clientHeight) < 150;
+    }
+    if(isBottom) loadMoreThreads();
+}
+window.addEventListener('scroll', checkAndLoadMore);
 document.addEventListener('DOMContentLoaded', () => {
     const feed = document.getElementById('threads-feed');
-    if (!feed) return;
-
-    feed.addEventListener('scroll', () => {
-        if (isFetchingThreads || !hasMoreThreads || !document.body.classList.contains('threads-active')) return;
-        if (feed.scrollHeight - feed.scrollTop - feed.clientHeight < 150) {
-            loadMoreThreads();
-        }
-    });
+    if(feed) feed.addEventListener('scroll', checkAndLoadMore);
 });
 
 function loadMoreThreads() {
