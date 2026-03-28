@@ -3857,7 +3857,7 @@ function handleInputTyping() {
       clearTimeout(typingTimer); clearTimeout(inputIdleTimer); resetAfkTimer();
       userMsgCountForSummary++;
       if (userMsgCountForSummary % 7 === 0) {
-          const recentContext = chatContextHistory.slice(-12).map(m => `${m.role}: ${m.text}`).join('\n');
+          const recentContext = chatContextHistory.slice(-12).map(m => `${m.role === 'user' ? 'Khách' : 'Peih AI'}: ${m.text}`).join('\n');
           google.script.run.doSummaryInBackground(currentSessionId, recentContext);
       }
       if (userMessageBuffer.length >= BUFFER_LIMIT) flushMessageBuffer(); 
@@ -4001,7 +4001,7 @@ function handleInputTyping() {
         // Tóm tắt ngầm nếu đến cữ
         if (userMsgCountForSummary % 7 === 0) {
             setTimeout(() => {
-                const recentContext = chatContextHistory.slice(-12).map(m => `${m.role}: ${m.text}`).join('\n');
+                const recentContext = chatContextHistory.slice(-12).map(m => `${m.role === 'user' ? 'Khách' : 'Peih AI'}: ${m.text}`).join('\n');
                 google.script.run.doSummaryInBackground(currentSessionId, recentContext);
             }, 3000);
         }
