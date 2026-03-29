@@ -1112,7 +1112,7 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-  <button id="floating-back-btn" onclick="toggleThreads()" class="lg:hidden fixed top-4 left-4 z-[9999] backdrop-blur-md shadow-md rounded-full px-4 py-2.5 text-[14px] font-bold flex items-center gap-1.5 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4" style="color: var(--text-main); background: var(--glass-bg); border: 1px solid var(--glass-border);">
+  <button id="floating-back-btn" onclick="toggleThreads()" class="lg:hidden fixed top-2 left-4 z-[9999] backdrop-blur-md shadow-md rounded-full px-4 py-2.5 text-[14px] font-bold flex items-center gap-1.5 transition-all duration-300 opacity-0 pointer-events-none transform -translate-y-4" style="color: var(--text-main); background: var(--glass-bg); border: 1px solid var(--glass-border);">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
     <span id="floating-back-text">Trở lại</span>
 </button>
@@ -3658,7 +3658,35 @@ function getDynamicSystemLostMsg() {
               if (textEl2) textEl2.innerText = maintText + formatETA(config.maintEnd);
               if (maintEtaContainer) maintEtaContainer.classList.remove('hidden');
           }
-          let uT=0,uY="",n=Date.now();if(config.lockStart>0&&n<config.lockStart&&(config.lockStart-n)<=3600000){uT=config.lockStart;uY="LOCK";}else if(config.maintStart>0&&n<config.maintStart&&(config.maintStart-n)<=3600000){uT=config.maintStart;uY="MAINT";}if(uT>0){let uB=document.getElementById('upcoming-warning-bubble'),uX=document.getElementById('upcoming-warning-text'),aV=uY==="LOCK"?"Bảo trì trang":"Bảo trì tin nhắn",aE=uY==="LOCK"?"Under maintenance":"Message maintenance",aJ=uY==="LOCK"?"サイトメンテナンス":"メッセージメンテナンス",uL={vi:`${aV} lúc ${formatETA(uT)}`,en:`${aE} at ${formatETA(uT)}`,ja:`${formatETA(uT)} に ${aJ}実施`};uX.innerText=uL[currentLang]||uL.vi;uB.classList.remove('hidden');uB.classList.add('flex','items-center');setTimeout(()=>{uB.classList.remove('opacity-0','-translate-y-4');uB.classList.add('opacity-100','translate-y-0');},1000);}
+          let n = Date.now();
+          if (config.maintStart > 0 && config.maintEnd > 0 && n >= config.maintStart && n <= config.maintEnd) {config.appStatus = "MAINT";}
+          if (config.lockStart > 0 && config.lockEnd > 0 && n >= config.lockStart && n <= config.lockEnd) {config.appStatus = "LOCK";}
+          let uT = 0;
+          let uY = "";
+          if (config.lockStart > 0 && n < config.lockStart && (config.lockStart - n) <= 3600000) { uT = config.lockStart; uY = "LOCK";
+          } else if (config.maintStart > 0 && n < config.maintStart && (config.maintStart - n) <= 3600000) {
+          uT = config.maintStart;uY = "MAINT";}
+
+          if (uT > 0) {
+            let uBubble = document.getElementById('upcoming-warning-bubble');
+            let uText = document.getElementById('upcoming-warning-text');  
+            let actVi = uY === "LOCK" ? "Bảo trì trang" : "Bảo trì tin nhắn";
+            let actEn = uY === "LOCK" ? "Under maintenance" : "Message maintenance";
+            let actJa = uY === "LOCK" ? "サイトメンテナンス" : "メッセージメンテナンス";
+            let uLang = {
+              vi: `${actVi} lúc ${formatETA(uT)}`,
+              en: `${actEn} at ${formatETA(uT)}`,
+              ja: `${formatETA(uT)} に ${actJa}実施`
+            };
+           uText.innerText = uLang[currentLang] || uLang.vi;
+           uBubble.classList.remove('hidden');
+           uBubble.classList.add('flex', 'items-center');
+    
+           setTimeout(() => {
+             uBubble.classList.remove('opacity-0', '-translate-y-4');
+             uBubble.classList.add('opacity-100', 'translate-y-0');
+           }, 1000);
+          }
           
           if(config.appStatus === "LOCK") {
               // 1. Không ẩn Welcome screen vội, để cho chữ Peih World trồi lên cho đẹp
