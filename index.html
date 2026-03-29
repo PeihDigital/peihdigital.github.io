@@ -4684,7 +4684,19 @@ function loadDailyStories() {
             return { ...item, timeText: timeAgo === 0 ? '1m' : `${timeAgo}h` };
         });
 
-        // Nhắm vào đúng cái Avatar chính
+        if (currentStoryList.length > 0) {
+            setTimeout(() => {
+                const firstItem = currentStoryList[0];
+                if (firstItem.type === 'video') {
+                    const v = document.createElement('video');
+                    v.preload = 'auto';
+                    v.src = firstItem.url;
+                } else {
+                    new Image().src = firstItem.url;
+                }
+            }, 2500);
+        }
+
         const lastViewed = sessionStorage.getItem('peih_story_viewed');
         const ring = document.getElementById('profile-avatar-ring');
         
@@ -4755,6 +4767,7 @@ function showStoryItem(index) {
     clearTimeout(storyTimer);
     const item = currentStoryList[index];
     document.getElementById('story-time').innerText = item.timeText;
+    
     for (let i = 0; i < currentStoryList.length; i++) {
         const fill = document.getElementById(`story-fill-${i}`);
         if (fill) {
@@ -4766,20 +4779,36 @@ function showStoryItem(index) {
 
     const imgEl = document.getElementById('story-img-viewer');
     const vidEl = document.getElementById('story-vid-viewer');
+    
     if (item.type === 'video') {
         imgEl.classList.add('hidden');
         vidEl.classList.remove('hidden');
-        vidEl.src = item.url;
-        vidEl.play().catch(e => console.log("Trình duyệt chặn auto-play video"));
         
-        vidEl.onloadedmetadata = () => {
+        vidEl.oncanplay = null;
+        vidEl.onerror = null;
+        
+        vidEl.oncanplay = () => {
+            vidEl.play().catch(e => {});
             animateProgressBar(index, vidEl.duration * 1000);
             storyTimer = setTimeout(() => nextStory(), vidEl.duration * 1000);
+            vidEl.oncanplay = null;
         };
+        
         vidEl.onerror = () => {
             animateProgressBar(index, STORY_DURATION);
             storyTimer = setTimeout(() => nextStory(), STORY_DURATION);
         };
+        
+        vidEl.src = item.url;
+        vidEl.load();
+        
+        if (vidEl.readyState >= 3) {
+            vidEl.oncanplay = null;
+            vidEl.play().catch(e => {});
+            animateProgressBar(index, vidEl.duration * 1000);
+            storyTimer = setTimeout(() => nextStory(), vidEl.duration * 1000);
+        }
+        
     } else {
         vidEl.pause();
         vidEl.removeAttribute('src');
@@ -4787,15 +4816,41 @@ function showStoryItem(index) {
         vidEl.classList.add('hidden');
         
         imgEl.classList.remove('hidden');
+        
+        imgEl.onload = null;
+        imgEl.onerror = null;
+        
+        imgEl.onload = () => {
+            animateProgressBar(index, STORY_DURATION);
+            storyTimer = setTimeout(() => nextStory(), STORY_DURATION);
+            imgEl.onload = null;
+        };
+        
+        imgEl.onerror = () => {
+            animateProgressBar(index, STORY_DURATION);
+            storyTimer = setTimeout(() => nextStory(), STORY_DURATION);
+        };
+        
         imgEl.src = item.url;
-        setTimeout(() => animateProgressBar(index, STORY_DURATION), 50);
-        storyTimer = setTimeout(() => nextStory(), STORY_DURATION);
-    }
-    if (index < currentStoryList.length - 1) {
-        const nextItem = currentStoryList[index + 1];
-        if (nextItem.type === 'img') {
-            new Image().src = nextItem.url; 
+        
+        if (imgEl.complete) {
+            imgEl.onload = null;
+            animateProgressBar(index, STORY_DURATION);
+            storyTimer = setTimeout(() => nextStory(), STORY_DURATION);
         }
+    }
+    
+    if (index < currentStoryList.length - 1) {
+        setTimeout(() => {
+            const nextItem = currentStoryList[index + 1];
+            if (nextItem.type === 'video') {
+                const v = document.createElement('video');
+                v.preload = 'auto';
+                v.src = nextItem.url;
+            } else {
+                new Image().src = nextItem.url; 
+            }
+        }, 1000);
     }
 }
 
