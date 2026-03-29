@@ -4721,12 +4721,12 @@ function requestCustomLanguage(targetLang, displayName) {
         }, 10);
     }
 
-    const enKeys = Object.keys(translations['en']).filter(k => k !== 'dreams');
-    const enValues = enKeys.map(k => translations['en'][k]);
-    const enDreams = translations['en'].dreams;
-    const enQuotes = quotes.map(q => q['en']);
-    const enDoraQuotes = doraQuotes.map(q => q['en']);
-    const arraysToTranslate = [enValues, enDreams, enQuotes, enDoraQuotes];
+    const viKeys = Object.keys(translations['vi']).filter(k => k !== 'dreams');
+    const viValues = viKeys.map(k => translations['vi'][k]);
+    const viDreams = translations['vi'].dreams;
+    const viQuotes = quotes.map(q => q['vi']);
+    const viDoraQuotes = doraQuotes.map(q => q['vi']);
+    const arraysToTranslate = [viValues, viDreams, viQuotes, viDoraQuotes];
     
     google.script.run.withSuccessHandler(function(results) {
         pillProg.style.width = "100%";
@@ -4745,8 +4745,8 @@ function requestCustomLanguage(targetLang, displayName) {
                 const transDoraQuotes = results[3];
                 
                 translations[targetLang] = {};
-                for (let i = 0; i < enKeys.length; i++) {
-                translations[targetLang][enKeys[i]] = transUI[i];
+                for (let i = 0; i < viKeys.length; i++) {
+                    translations[targetLang][viKeys[i]] = transUI[i];
                 }
                 translations[targetLang].dreams = transDreams;
                 
@@ -4766,7 +4766,7 @@ function requestCustomLanguage(targetLang, displayName) {
             pill.classList.add('hidden');
             pill.classList.remove('flex', 'opacity-100');
         }
-    }).translateArrays(arraysToTranslate, 'en', targetLang);
+    }).translateArrays(arraysToTranslate, 'vi', targetLang);
 }
 
 // Tự động đóng menu ngôn ngữ khi click ra ngoài
