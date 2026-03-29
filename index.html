@@ -4668,8 +4668,24 @@ function requestCustomLanguage(targetLang, displayName) {
     const pillText = document.getElementById('pill-text');
     const pillProg = document.getElementById('pill-progress');
     
+    const loadingMap = {
+        'it': 'Caricamento delle lingue',
+        'la': 'Linguae instruuntur',
+        'tl': 'Kinakarga ang mga wika',
+        'zh-tw': '正在載入語言',
+        'my': 'ဘာသာစကားများကို တင်နေသည်',
+        'fr': 'Chargement des langues',
+        'ko': '언어 로딩 중',
+        'zh': '正在加载语言',
+        'es': 'Cargando idiomas',
+        'de': 'Sprachen werden geladen',
+        'th': 'กำลังโหลดภาษา',
+        'ru': 'Загрузка языков',
+        'ar': 'جار تحميل اللغات'
+    };
+
     if(pill) {
-        pillText.innerHTML = "Processing...";
+        pillText.innerHTML = (loadingMap[targetLang.toLowerCase()] || "Loading") + "...";
         pillProg.style.width = "0%";
         pill.classList.remove('hidden');
         pill.classList.add('flex');
