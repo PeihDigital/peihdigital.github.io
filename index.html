@@ -1240,10 +1240,10 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
         <svg class="w-4 h-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
       </button>
 
-      <div class="relative w-[105px] md:w-[120px] lg:w-[135px] shrink-0">
-          <button onclick="toggleLangMenu()" class="w-full h-full p-4 rounded-2xl text-[15px] font-bold glow-interactive flex items-center justify-center gap-2 shadow-sm" style="color: var(--text-main); background: var(--bot-msg-bg); border: 1px solid var(--glass-border);">
-            <span id="current-lang-display">🇻🇳 VI</span>
-            <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+      <div class="relative w-fit min-w-[105px] shrink-0">
+          <button onclick="toggleLangMenu()" class="w-full h-full py-4 px-3 rounded-2xl text-[14px] font-bold glow-interactive flex items-center justify-center gap-1.5 shadow-sm flex-nowrap whitespace-nowrap" style="color: var(--text-main); background: var(--bot-msg-bg); border: 1px solid var(--glass-border);">
+            <span id="current-lang-display" class="flex-shrink-0">🇻🇳 VI</span>
+            <svg class="w-3.5 h-3.5 opacity-60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
           </button>
           
           <div id="lang-dropdown" class="hidden absolute top-full left-0 w-full mt-2 z-[100] flex flex-col gap-1">
@@ -4544,8 +4544,6 @@ function handleThreadComment(element, rowIndex) {
     }
 }
 
-// 2. Gửi bình luận và Gọi AI Trả lời
-// 2. Gửi bình luận và Gọi AI Trả lời
 function submitInlineComment(rowIndex) {
     const input = document.getElementById(`comment-input-${rowIndex}`);
     const text = input.value.trim();
@@ -4615,30 +4613,6 @@ function submitInlineComment(rowIndex) {
     }).generateCommentReply(rowIndex, text, currentLang);
 }
 
-// 4. Hàm tạo thông báo nổi (Toast) phong cách iOS/Threads
-function showMinimalToast(message) {
-    const toast = document.createElement('div');
-    toast.className = 'fixed bottom-8 left-1/2 transform -translate-x-1/2 px-5 py-2.5 rounded-full text-[13px] font-bold shadow-xl z-[999999] transition-all duration-400 opacity-0 translate-y-4 whitespace-nowrap';
-    toast.style.background = 'var(--text-main)';
-    toast.style.color = 'var(--bg-color)';
-    toast.innerText = message;
-    
-    document.body.appendChild(toast);
-    
-    // Hiệu ứng nổi lên
-    requestAnimationFrame(() => {
-        toast.classList.remove('opacity-0', 'translate-y-4');
-        toast.classList.add('opacity-100', 'translate-y-0');
-    });
-    
-    // Tự động mờ dần và xoá sau 2.5 giây
-    setTimeout(() => {
-        toast.classList.remove('opacity-100', 'translate-y-0');
-        toast.classList.add('opacity-0', 'translate-y-4');
-        setTimeout(() => toast.remove(), 400); // Đợi CSS chạy xong rồi xoá khỏi HTML
-    }, 2500);
-}
-// Thêm 2 hàm này vào phần script của bạn
 function toggleLangMenu() {
     const dropdown = document.getElementById('lang-dropdown');
     if (dropdown.classList.contains('hidden')) {
@@ -4694,79 +4668,56 @@ function requestCustomLanguage(targetLang, displayName) {
     const pillText = document.getElementById('pill-text');
     const pillProg = document.getElementById('pill-progress');
     
-    const loadingMap = {
-        'it': 'Caricamento delle lingue',
-        'la': 'Linguae instruuntur',
-        'tl': 'Kinakarga ang mga wika',
-        'zh-tw': '正在載入語言',
-        'my': 'ဘာသာစကားများကို တင်နေသည်',
-        'fr': 'Chargement des langues',
-        'ko': '언어 로딩 중',
-        'zh': '正在加载语言',
-        'es': 'Cargando idiomas',
-        'de': 'Sprachen werden geladen',
-        'th': 'กำลังโหลดภาษา',
-        'ru': 'Загрузка языков',
-        'ar': 'جار تحميل اللغات'
-    };
-
     if(pill) {
-        pillText.innerHTML = (loadingMap[targetLang.toLowerCase()] || "Loading") + "...";
+        pillText.innerHTML = "Processing...";
         pillProg.style.width = "0%";
         pill.classList.remove('hidden');
         pill.classList.add('flex');
         setTimeout(() => {
             pill.classList.add('scale-100', 'opacity-100');
-            pillProg.style.width = "70%"; // Chạy trước 70% để tạo cảm giác đang tải
+            pillProg.style.width = "80%";
         }, 10);
     }
 
-    const viKeys = Object.keys(translations['vi']).filter(k => k !== 'dreams');
-    const viValues = viKeys.map(k => translations['vi'][k]);
-    const viDreams = translations['vi'].dreams;
-    const viQuotes = quotes.map(q => q['vi']);
-    const viDoraQuotes = doraQuotes.map(q => q['vi']);
-    const arraysToTranslate = [viValues, viDreams, viQuotes, viDoraQuotes];
-    
-    google.script.run.withSuccessHandler(function(results) {
-        pillProg.style.width = "100%";
-        pillText.innerHTML = "✓ DONE"; 
-        
-        setTimeout(() => {
-            pill.classList.replace('scale-100', 'scale-90');
-            pill.classList.remove('opacity-100');
-            setTimeout(() => {
-                pill.classList.add('hidden');
-                pill.classList.remove('flex');
-                
-                const transUI = results[0];
-                const transDreams = results[1];
-                const transQuotes = results[2];
-                const transDoraQuotes = results[3];
-                
-                translations[targetLang] = {};
-                for (let i = 0; i < viKeys.length; i++) {
-                    translations[targetLang][viKeys[i]] = transUI[i];
-                }
-                translations[targetLang].dreams = transDreams;
-                
-                for (let i = 0; i < quotes.length; i++) {
-                    quotes[i][targetLang] = transQuotes[i];
-                }
-                for (let i = 0; i < doraQuotes.length; i++) {
-                    doraQuotes[i][targetLang] = transDoraQuotes[i];
-                }
-                
-                changeLang(targetLang);
-            }, 300);
-        }, 500); // Hiện tích xanh trong 0.5s
+    google.script.run.withSuccessHandler(function(package) {
+        if (package.error) {
+            if(pill) { pill.classList.add('hidden'); pill.classList.remove('flex', 'opacity-100'); }
+            alert("Translation failed. Please try again.");
+            return;
+        }
 
+        translations[targetLang] = package.ui;
+        
+        package.quotes.forEach((text, idx) => {
+            if (quotes[idx]) quotes[idx][targetLang] = text;
+        });
+        package.doraQuotes.forEach((text, idx) => {
+            if (doraQuotes[idx]) doraQuotes[idx][targetLang] = text;
+        });
+
+        if(pill) {
+            pillProg.style.width = "100%";
+            pillText.innerHTML = "✓ DONE";
+            pillText.style.color = "#22c55e";
+            setTimeout(() => {
+                pill.classList.replace('scale-100', 'scale-90');
+                pill.classList.remove('opacity-100');
+                setTimeout(() => {
+                    pill.classList.add('hidden');
+                    pill.classList.remove('flex');
+                    pillText.style.color = "var(--bot-msg-bg)";
+                    changeLang(targetLang);
+                }, 300);
+            }, 600);
+        } else {
+            changeLang(targetLang);
+        }
     }).withFailureHandler(function() {
         if(pill) {
             pill.classList.add('hidden');
             pill.classList.remove('flex', 'opacity-100');
         }
-    }).translateArrays(arraysToTranslate, 'vi', targetLang);
+    }).translateFullPackage(targetLang);
 }
 
 // Tự động đóng menu ngôn ngữ khi click ra ngoài
