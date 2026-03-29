@@ -4425,7 +4425,7 @@ if (post.media && post.media.length > 0) {
                 </div>
                 <span class="text-[13px] text-gray-400 shrink-0">${post.date}</span>
             </div>
-            <p class="text-[15px] leading-relaxed whitespace-pre-wrap" style="color: var(--text-main);"><span id="thread-text-content-${post.rowIndex}">${post.text}</span>${post.text ? `<span id="thread-trans-btn-${post.rowIndex}" onclick="translateThread(${post.rowIndex})" class="cursor-pointer ml-2 text-[13px] font-medium opacity-60 hover:opacity-100 transition-opacity whitespace-nowrap select-none" style="color: var(--text-sub);"> ${currentLang === 'en' ? 'Translation' : (currentLang === 'ja' ? '翻訳' : 'Dịch')}</span>` : ''}</p>
+            <p class="text-[15px] leading-relaxed whitespace-pre-wrap" style="color: var(--text-main);"><span id="thread-text-content-${post.rowIndex}">${post.text}</span>${post.text ? ` <span id="thread-trans-btn-${post.rowIndex}" onclick="translateThread(${post.rowIndex})" class="inline-block cursor-pointer ml-1 text-[13px] font-medium opacity-60 hover:opacity-100 transition-opacity whitespace-nowrap select-none" style="color: var(--text-sub);">${currentLang === 'en' ? 'Translation' : (currentLang === 'ja' ? '翻訳' : 'Dịch')}</span>` : ''}</p>
             
             ${mediaHtml}
             
