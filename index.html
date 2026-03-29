@@ -1107,6 +1107,10 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
     from { background-position: 0 0; }
     to { background-position: 40px 0; }
 }
+@keyframes loadingStrip {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(300%); }
+}
   </style>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -1265,11 +1269,30 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
       </div>
       
       <div class="relative w-full h-full flex flex-col overflow-hidden flex-1">
-           <div id="master-sword" class="master-sword">🗡️</div>
-           <div id="sb-coffee" class="sb-coffee-icon">☕</div>
-           <div id="maint-state-container" class="absolute inset-0 hidden flex-col items-center justify-center z-[5]" style="background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: inherit;">
+             <div id="master-sword" class="master-sword">🗡️</div>
+                <div id="sb-coffee" class="sb-coffee-icon">☕</div>
+                 <div id="maint-state-container" class="absolute inset-0 hidden flex-col items-center justify-center z-[5]" style="background: var(--glass-bg); backdrop-filter: blur(8px); border-radius: inherit;">
                
-               <div class="absolute flex items-center justify-center w-32 h-32 z-0 pointer-events-none mt-[-45px]">
+                <div class="absolute top-0 left-0 w-full h-1 overflow-hidden">
+    <div class="h-full bg-green-500/50 w-1/3 animate-[loadingStrip_2s_linear_infinite]"></div>
+</div>
+
+<div class="absolute top-6 left-6 right-6 flex justify-between items-start pointer-events-none z-20">
+    <div class="flex flex-col gap-1">
+        <span class="text-[10px] font-black tracking-[0.2em] text-green-500 uppercase">System Identity</span>
+        <span class="text-[10px] font-mono font-bold text-green-500 pulse-anim">ID: M1_PRO_CORE_V2.0</span>
+    </div>
+    
+    <div class="flex flex-col items-end gap-1">
+        <span class="text-[10px] font-black tracking-[0.2em] text-red-500 uppercase">Power Status</span>
+        <div class="flex items-center gap-1 pulse-anim text-red-500">
+            <span class="text-[10px] font-mono font-bold">CRITICAL</span>
+            <span class="text-[10px] leading-none">⚠️</span>
+        </div>
+    </div>
+</div>
+
+               <div class="absolute flex items-center justify-center w-32 h-32 z-0 pointer-events-none mt-[-40px]">
                    <div class="m1-radar"></div>
                    <div class="m1-radar m1-radar-2"></div>
                </div>
