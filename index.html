@@ -1110,6 +1110,8 @@ body.threads-active #profile-avatar-ring.story-ring-viewed::before {
     <span id="floating-back-text">Trở lại</span>
 </button>
 
+<div id="upcoming-warning-bubble" class="fixed top-4 left-1/2 transform -translate-x-1/2 z-[9999] hidden gap-2 px-4 py-2 rounded-full shadow-lg backdrop-blur-md transition-all duration-500 opacity-0 -translate-y-4" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:#ef4444;"><svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg><span id="upcoming-warning-text" class="text-[12px] font-bold tracking-wide whitespace-nowrap"></span></div>
+
   <div id="logout-overlay">
       <div>
         <div class="logout-text" id="logout-1">> Shutting down connections...</div>
@@ -3649,8 +3651,7 @@ function getDynamicSystemLostMsg() {
               if (textEl2) textEl2.innerText = maintText + formatETA(config.maintEnd);
               if (maintEtaContainer) maintEtaContainer.classList.remove('hidden');
           }
-          // --- KẾT THÚC: XỬ LÝ IN GIỜ LÊN BẢNG ĐIỆN TỬ ---
-          // --- BẮT ĐẦU CODE KHÓA TỬ THẦN Ở ĐÂY ---
+          let uTime=0;let uType="";let n=Date.now();if(config.lockStart>0&&n<config.lockStart&&(config.lockStart-n)<=3600000){uTime=config.lockStart;uType="LOCK";}else if(config.maintStart>0&&n<config.maintStart&&(config.maintStart-n)<=3600000){uTime=config.maintStart;uType="MAINT";}if(uTime>0){let uBubble=document.getElementById('upcoming-warning-bubble');let uText=document.getElementById('upcoming-warning-text');let action=uType==="LOCK"?"khoá":"bảo trì";let uLang={vi:`Hệ thống sẽ ${action} lúc ${formatETA(uTime)}`,en:`System will be ${action==="khoá"?"locked":"under maintenance"} at ${formatETA(uTime)}`,ja:`システムは${formatETA(uTime)}に${action==="khoá"?"ロック":"メンテナンス"}されます`};uText.innerText=uLang[currentLang]||uLang.vi;uBubble.classList.remove('hidden');uBubble.classList.add('flex','items-center');setTimeout(()=>{uBubble.classList.remove('opacity-0','-translate-y-4');uBubble.classList.add('opacity-100','translate-y-0');},100);}
           if(config.appStatus === "LOCK") {
               // 1. Không ẩn Welcome screen vội, để cho chữ Peih World trồi lên cho đẹp
               document.getElementById('welcome-screen').classList.remove('hidden');
@@ -4522,14 +4523,54 @@ document.addEventListener('click', function(e) {
                 // Quét và xóa sạch các câu báo lỗi màu đỏ trên màn hình
                 const sysBubbles = document.querySelectorAll('.system-bubble');
                 sysBubbles.forEach(b => { if (b.innerText.includes("⚠️")) b.remove(); });
+                
                 let config = payload.uiConfig;
                 globalUIConfig = config;
                 
+                // 🚨 BỨC TƯỜNG LỬA: KIỂM TRA LOCK NGAY LẬP TỨC VÀ BẮT QUẢ TANG
+                if (config.appStatus === "LOCK") {
+                    inputField.disabled = true;
+                    sendBtn.disabled = true;
+                    
+                    // Bộ từ điển cà khịa "Hacker lỏ" đa ngôn ngữ
+                    const savageBypass = {
+                        vi: "Tính rút cáp mạng để lách luật hả? Peih biết hết nha hacker lỏ! 😎 Đang đóng gói đưa bạn ra ngoài trong 7 giây...",
+                        en: "Trying to bypass by cutting the network? Nice try! 😎 Kicking you out in 7 seconds...",
+                        ja: "ネットワークを切ってバイパスしようとした？お見通しですよ！😎 7秒後に退出させます..."
+                    };
+                    
+                    // Xóa thông báo lỗi mạng màu đỏ trước đó cho sạch sẽ
+                    const sysBubbles = document.querySelectorAll('.system-bubble');
+                    sysBubbles.forEach(b => { if (b.innerText.includes("⚠️")) b.remove(); });
+                    
+                    // 1. In bong bóng cà khịa của Peih AI ra màn hình
+                    appendBotMsg(savageBypass[currentLang] || savageBypass['vi'], 0, 1, false, false);
+                    
+                    // 2. Kích hoạt đồng hồ đếm ngược 3.5 giây rồi mới sập rèm
+                    setTimeout(() => {
+                        document.getElementById('welcome-screen').classList.remove('hidden');
+                        const gate = document.getElementById('gatekeeper-screen');
+                        if(gate) {
+                            gate.classList.remove('hidden');
+                            gate.classList.add('flex');
+                            setTimeout(() => gate.classList.remove('opacity-0'), 50);
+                        }
+                        
+                        // Hủy diệt khung app không chừa dấu vết
+                        const appContainer = document.querySelector('.app-container');
+                        if (appContainer) appContainer.remove(); 
+                        document.body.style.overflow = 'hidden';
+                    }, 7500);
+                    
+                    return; // Chặn đứng, KHÔNG cho chạy đoạn code mở cửa bên dưới nữa!
+                }
+                
+                // --- CÁC TRẠNG THÁI BÌNH THƯỜNG ---
                 if(config.appStatus === "MAINT") {
-             toggleM1Maintenance(true);
-             isAppSleeping = true;
-         } 
-         else if(config.appStatus === "OFF") {
+                     toggleM1Maintenance(true);
+                     isAppSleeping = true;
+                } 
+                else if(config.appStatus === "OFF") {
                      toggleM1Maintenance(false);
                      isAppSleeping = true; 
                      inputField.disabled = true; 
@@ -4543,7 +4584,6 @@ document.addEventListener('click', function(e) {
                 } else {
                      toggleM1Maintenance(false);
                      // Mở khóa UI, trở lại bình thường
-                     // (GIỮ NGUYÊN CODE CŨ CỦA ÔNG TỪ ĐOẠN inputField.disabled = false; TRỞ ĐI)
                      inputField.disabled = false; 
                      sendBtn.disabled = false;
                      sendBtn.innerText = translations[currentLang].sendBtn;
