@@ -3406,7 +3406,8 @@ function changeLang(lang, isInit = false) {
     };
   const displayEl = document.getElementById('current-lang-display');
   if (displayEl) {
-    displayEl.innerText = langMap[lang.toLowerCase()] || ("🌐 " + lang.toUpperCase());
+    let fallbackFlag = window.customTempFlag ? (window.customTempFlag + " " + lang.toUpperCase()) : ("🌐 " + lang.toUpperCase());
+    displayEl.innerText = langMap[lang.toLowerCase()] || fallbackFlag;
   }
   activePrivacyMenus = [];      
   activePrivacyContents = {};   
@@ -4701,12 +4702,14 @@ async function requestCustomLanguage(targetLang, displayName) {
             }, 10);
         }
         
-        finalLang = await new Promise(resolve => {
+        let detected = await new Promise(resolve => {
             google.script.run
                 .withSuccessHandler(resolve)
-                .withFailureHandler(() => resolve('en'))
+                .withFailureHandler(() => resolve({code: 'en', flag: '🇺🇸'}))
                 .aiDetectLanguageCode(finalLang);
         });
+        finalLang = detected.code;
+        window.customTempFlag = detected.flag;
     }
 
     if (translations[finalLang]) {
