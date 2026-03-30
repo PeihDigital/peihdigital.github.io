@@ -4117,6 +4117,9 @@ function handleInputTyping() {
     let cmd = langCmds[currentLang.toLowerCase()];
     if (!cmd) {
         cmd = translations[currentLang].strictLangCmd;
+        if (!cmd) {
+            cmd = `STRICT LANGUAGE: ISO Code '${currentLang.toUpperCase()}'. (Requirement: You MUST reply 100% in this language. Chat naturally, use \\n for line breaks).`;
+        }
     }
     
     if (isMusicPlaying) cmd += " [BỐI CẢNH ẨN: Người đang nghe bài nhạc do bạn sáng tác. Hãy chill và hỏi cảm nhận].";
