@@ -4114,7 +4114,10 @@ function handleInputTyping() {
         'ru': "СТРОГИЙ ЯЗЫК: Русский. (Требование: Вы ДОЛЖНЫ отвечать на 100% на русском языке. Общайтесь естественно, используйте \\n для переноса строк).",
         'ar': "لغة صارمة: العربية. (المتطلبات: يجب أن ترد بنسبة 100٪ باللغة العربية. تحدث بشكل طبيعي، استخدم \\n لفواصل الأسطر)."
     };
-    let cmd = langCmds[currentLang.toLowerCase()] || `STRICT LANGUAGE: ISO Code '${currentLang.toUpperCase()}'. (Requirement: You MUST reply 100% in this language. Chat naturally, use \\n for line breaks).`;
+    let cmd = langCmds[currentLang.toLowerCase()];
+    if (!cmd) {
+        cmd = translations[currentLang].strictLangCmd;
+    }
     
     if (isMusicPlaying) cmd += " [BỐI CẢNH ẨN: Người đang nghe bài nhạc do bạn sáng tác. Hãy chill và hỏi cảm nhận].";
     if (document.getElementById('main-chat-wrapper').classList.contains('zelda-mode')) cmd += " [BỐI CẢNH: Zelda: Tears of the Kingdom. Hyrule].";
