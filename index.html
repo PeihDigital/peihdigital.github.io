@@ -3406,8 +3406,9 @@ function changeLang(lang, isInit = false) {
     };
   const displayEl = document.getElementById('current-lang-display');
   if (displayEl) {
-    let savedFlag = window.customTempFlag || localStorage.getItem('peih_custom_flag_' + lang);
-    let fallbackFlag = savedFlag ? (savedFlag + " " + lang.toUpperCase()) : ("🌐 " + lang.toUpperCase());
+    let savedFlag = translations[lang] ? translations[lang].customFlag : null;
+    let finalFallback = savedFlag || window.customTempFlag || localStorage.getItem('peih_custom_flag_' + lang);
+    let fallbackFlag = finalFallback ? (finalFallback + " " + lang.toUpperCase()) : ("🌐 " + lang.toUpperCase());
     displayEl.innerText = langMap[lang.toLowerCase()] || fallbackFlag;
   }
   activePrivacyMenus = [];      
@@ -4768,6 +4769,7 @@ async function requestCustomLanguage(targetLang, displayName) {
         }
 
         translations[finalLang] = package.ui;
+        translations[finalLang].customFlag = package.flag;
         
         package.quotes.forEach((text, idx) => {
             if (quotes[idx]) quotes[idx][finalLang] = text;
@@ -4798,7 +4800,7 @@ async function requestCustomLanguage(targetLang, displayName) {
             pill.classList.add('hidden');
             pill.classList.remove('flex', 'opacity-100');
         }
-    }).translateFullPackage(finalLang);
+    }).translateFullPackage(finalLang, window.customTempFlag);
 }
 
 // Tự động đóng menu ngôn ngữ khi click ra ngoài
