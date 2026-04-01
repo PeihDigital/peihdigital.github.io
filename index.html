@@ -8,11 +8,9 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
   <style>
-  /* ================= HIỆU ỨNG CHỮ CHẠY PING-PONG THÔNG MINH ================= */
 .marquee-container {
     width: 100%;
     overflow: hidden;
-    /* Lấy container này làm thước đo chiều ngang để trượt tự động */
     container-type: inline-size; 
 }
 
@@ -20,7 +18,6 @@
     display: inline-block;
     white-space: nowrap;
     width: max-content;
-    /* Chạy qua lại mượt mà, dừng nghỉ ở 2 đầu */
     animation: smartPingPong 4s ease-in-out infinite alternate;
 }
 
@@ -30,35 +27,29 @@
         transform: translateX(min(0px, calc(100cqw - 100%))); 
     }
 }
-
-
-/* ================= THREADS UI - MƯỢT VÀ FIX LỖI KHOẢNG TRẮNG ================= */
 .area-chat {
     position: relative !important;
-    display: block !important; /* Xóa Grid đi, quay về dạng khối mặc định */
+    display: block !important; 
 }
 
-/* KHUNG CHAT CHÍNH (MẶC ĐỊNH) */
 #main-chat-wrapper {
-    position: relative; /* Nằm trong luồng bình thường để chống form */
+    position: relative; 
     width: 100%;
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease !important;
 }
 
-/* KHUNG THREADS (ĐANG ẨN) */
 #threads-wrapper {
-    position: absolute !important; /* Rút khỏi không gian, tàng hình 100% */
+    position: absolute !important; 
     top: 0; left: 0; right: 0;
-    display: flex !important; /* Vẫn giữ flex để layout bên trong không bị hỏng */
+    display: flex !important; 
     opacity: 0;
     pointer-events: none;
     transform: scale(0.95) translateY(40px);
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.4s ease !important;
 }
 
-/* KHI BẤM NÚT: HOÁN ĐỔI VỊ TRÍ VÀ THUỘC TÍNH */
 body.threads-active #main-chat-wrapper {
-    position: absolute !important; /* RÚT CHAT KHỎI LUỒNG -> Triệt tiêu hoàn toàn khoảng trắng dư thừa */
+    position: absolute !important;
     top: 0; left: 0; right: 0;
     opacity: 0 !important;
     pointer-events: none !important;
@@ -67,14 +58,13 @@ body.threads-active #main-chat-wrapper {
 }
 
 body.threads-active #threads-wrapper {
-    position: relative !important; /* ĐƯA THREADS VÀO LUỒNG -> Chiều cao tự động ôm sát nội dung Threads */
+    position: relative !important; 
     opacity: 1 !important;
     pointer-events: auto !important;
     transform: scale(1) translateY(0) !important; 
     filter: blur(0);
 }
 
-/* 2. Mobile: Sửa lỗi cuộn ngang, ghim nút, thả bóng mờ Avatar */
 @media (max-width: 1023px) {
     body.threads-active .area-menu,
     body.threads-active .area-images { display: none !important; }
@@ -85,7 +75,6 @@ body.threads-active #threads-wrapper {
         overflow-x: hidden !important; 
     }
     
-    /* RESET BODY: Bỏ padding cứng của trang để tránh lỗi bóng mờ và cuộn ngang */
     body.threads-active { 
         padding: 0 !important; 
         overflow-x: hidden !important; 
@@ -93,15 +82,13 @@ body.threads-active #threads-wrapper {
         width: 100vw !important;
     }
     
-    /* Bù chính xác lề bị mất của body để Avatar bị ĐÓNG BĂNG, không giật dù chỉ 1 pixel */
     body.threads-active .area-profile { 
-        padding: 1rem 1rem 0 1rem !important; /* Trả về đúng 1rem như cũ */
+        padding: 1rem 1rem 0 1rem !important; 
         margin-top: 0 !important;
-        margin-bottom: 1rem !important; /* Tạo khoảng cách vừa đủ với Dòng thời gian ở dưới */
-        transition: none !important; /* Tắt hoạt ảnh để nó không bị trượt */
+        margin-bottom: 1rem !important; 
+        transition: none !important; 
     }
 
-    /* --- HIỆU ỨNG DROPDOWN NGÔN NGỮ --- */
     .dropdown-anim {
         transform-origin: top center;
         animation: dropDownScale 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -116,7 +103,6 @@ body.threads-active #threads-wrapper {
     animation: threadsAppleReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Thêm hiệu ứng mờ dần cho khung chat cũ để không bị mất đột ngột */
 .chat-exit-fade {
     animation: chatFadeOut 0.4s ease forwards;
 }
@@ -124,8 +110,8 @@ body.threads-active #threads-wrapper {
 @keyframes threadsAppleReveal {
     0% { 
         opacity: 0; 
-        transform: translateY(20px) scale(0.96); /* Xuất hiện từ dưới và hơi nhỏ hơn */
-        filter: blur(8px); /* Tạo độ mờ ảo ban đầu */
+        transform: translateY(20px) scale(0.96); 
+        filter: blur(8px); 
     }
     100% { 
         opacity: 1; 
@@ -137,7 +123,7 @@ body.threads-active #threads-wrapper {
 @keyframes chatFadeOut {
     to { 
         opacity: 0; 
-        transform: scale(1.05); /* Hơi to ra khi biến mất */
+        transform: scale(1.05);
         filter: blur(10px);
     }
 }
@@ -148,13 +134,12 @@ body.threads-active #threads-wrapper {
         min-width: 0 !important; 
     }
     
-    /* Giao diện Threads tràn viền chuẩn chỉnh */
     body.threads-active #threads-wrapper {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         border-radius: 0 !important;
-        backdrop-filter: none !important; /* Xóa bỏ lớp kính mờ thừa */
+        backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
         height: auto !important; 
         max-height: none !important;
@@ -182,10 +167,8 @@ body.threads-active #threads-wrapper {
     }
 }
 
-/* 3. Carousel vuốt ảnh (Sửa lỗi không lấp lửng trên mobile) */
 .thread-carousel {
     display: flex; gap: 8px; overflow-x: auto; 
-    /* TẮT SNAP ban đầu để tránh lỗi trình duyệt tự cuộn sang ảnh 2 lúc đang scale */
     scroll-snap-type: none; 
     padding-bottom: 5px;
     -ms-overflow-style: none; scrollbar-width: none;
@@ -199,7 +182,6 @@ body.threads-active #threads-wrapper {
     transition: opacity 0.4s ease;
 }
 
-/* 1. ẢNH DỌC (CAROUSEL): Chiều cao cố định như cũ (280px), tự động bóp hẹp bề ngang */
 .thread-carousel-item.img-portrait {
     height: 280px;
     width: auto;
@@ -208,8 +190,6 @@ body.threads-active #threads-wrapper {
 @media (min-width: 640px) {
     .thread-carousel-item.img-portrait { height: 350px; }
 }
-
-/* 2. ẢNH NGANG (CAROUSEL): Bề ngang 82% để lấp lửng, chiều cao tự động lùn xuống */
 .thread-carousel-item.img-landscape {
     width: 82%;
     height: auto;
@@ -219,42 +199,32 @@ body.threads-active #threads-wrapper {
     .thread-carousel-item.img-landscape { width: 60%; }
 }
 
-/* 3. MỘT ẢNH DUY NHẤT (Đứng một mình) */
 .single-img {
     transition: opacity 0.4s ease;
     margin-top: 10px;
 }
 
-/* Ảnh dọc: Giữ nguyên chiều cao 320px, bề ngang tự động co giãn theo đúng tỷ lệ gốc của ảnh */
 .single-img.img-portrait {
     height: 320px;
     width: auto;
-    max-width: 100%; /* Chống tràn màn hình điện thoại nếu ảnh quá to */
+    max-width: 100%; 
 }
 @media (min-width: 640px) {
     .single-img.img-portrait { height: 420px; }
 }
-
-/* Ảnh ngang: Rộng 100% khung chat, chiều cao tự động co giãn theo tỷ lệ gốc */
 .single-img.img-landscape {
     width: 100%;
     height: auto;
-    max-height: 450px; /* Chặn lại để lỡ ảnh ngang mà gần vuông thì không bị cao lố */
-    object-fit: contain; /* Đảm bảo không bao giờ bị cắt xén */
+    max-height: 450px; 
+    object-fit: contain;
 }
 
-/* HIỆU ỨNG TẢI ẢNH (SKELETON LOADING) */
 .img-loading {
-    /* Tạo màu nền xám mờ dùng được cho cả Light và Dark mode */
     background-color: rgba(156, 163, 175, 0.2); 
-    /* Hiệu ứng nhịp đập nhấp nháy nhẹ */
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; 
-    /* Ẩn cái icon "ảnh bị vỡ" mặc định của trình duyệt đi */
     color: transparent; 
-    /* Giữ chỗ: Ép độ cao tối thiểu để khung không bị xẹp lép trước khi ảnh tải */
     min-height: 250px; 
     min-width: 50%;
-    /* Ẩn ảnh thật đi cho đến khi tải xong, chỉ hiện nền xám */
     opacity: 0.7; 
 }
 
@@ -277,7 +247,6 @@ body.threads-active #threads-wrapper {
     -moz-user-select: none; 
     -ms-user-select: none; 
 }
-/* ================= HIỆU ỨNG LẬT THẺ 3D CHO ẢNH MÙA HÈ (ĐÃ FIX LỖI CHỚP NHÁY) ================= */
 .perspective-1000 { 
     perspective: 1000px; 
 }
@@ -288,24 +257,21 @@ body.threads-active #threads-wrapper {
 .image-front, .image-back {
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    /* Ép trình duyệt dùng GPU để chống chớp nháy */
     -webkit-transform: translate3d(0,0,0);
     transform: translate3d(0,0,0);
 }
 .image-front {
-    z-index: 2; /* Ép mặt trước luôn nằm trên cùng lúc bình thường */
-    transform: rotateY(0deg) translateZ(1px); /* Kéo nổi lên 1 pixel để không bị xuyên thấu */
+    z-index: 2;
+    transform: rotateY(0deg) translateZ(1px);
 }
 .image-back {
     z-index: 1;
-    transform: rotateY(180deg) translateZ(1px); /* Kéo nổi mặt sau lên 1 pixel */
+    transform: rotateY(180deg) translateZ(1px);
 }
-/* Tự động lật mặt sau khi Doraemon Mode kích hoạt */
 body.doraemon-mode .image-flipper {
     transform: rotateY(180deg);
 }
     .poof-animation {
-    /* Đổi từ 0.5s lên 1.2s để chậm lại gấp đôi */
     animation: poof 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     pointer-events: none;
 }
@@ -314,7 +280,6 @@ body.doraemon-mode .image-flipper {
   0% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
   100% { transform: scale(1.3) translateY(-20px); opacity: 0; filter: blur(15px); }
 }
-    /* Hiệu ứng rung lắc khi gặp lỗi nặng */
     .error-shake {
         animation: heavy-shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
     }
@@ -3369,17 +3334,16 @@ async function triggerBlurEgg(isFromAI = false) {
 
 function changeLang(lang, isInit = false) {
   let savedLang = lang;
-
-  if (!translations[lang]) {
+  if (!translations[lang] && !window.isAutoFetchingLang) {
     savedLang = lang;
-    lang = 'en';
+    lang = 'en'; 
     window.isAutoFetchingLang = true;
     window.wasInitLoad = isInit; 
+    
     let attempts = 0;
     const checkWelcome = setInterval(() => {
       attempts++;
       const welcome = document.getElementById('welcome-screen');
-      
       if ((welcome && welcome.classList.contains('hidden')) || attempts > 20) {
         clearInterval(checkWelcome);
         setTimeout(() => {
@@ -4770,7 +4734,7 @@ async function requestCustomLanguage(targetLang, displayName) {
 
         translations[finalLang] = package.ui;
         translations[finalLang].customFlag = package.flag;
-        
+        window.isAutoFetchingLang = false;
         package.quotes.forEach((text, idx) => {
             if (quotes[idx]) quotes[idx][finalLang] = text;
         });
