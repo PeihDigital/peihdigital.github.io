@@ -2446,9 +2446,7 @@ function handleInputTyping() {
         localStorage.setItem('peih_context_' + currentSessionId, JSON.stringify(chatContextHistory));
         inputField.disabled = false; sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].sendBtn; inputField.focus(); resetAfkTimer();
 
-        setTimeout(() => {
-            google.script.run.saveChatLogToSheet(currentSessionId, 'Peih AI', botResponse, clientCity || "Không rõ", clientLat, clientLon, false);
-        }, 1000);
+        fetch(GAS_API_URL, { method: 'POST', keepalive: true, body: JSON.stringify({ action: 'saveFullChatLog', args: [currentSessionId, combinedMessage, botResponse, clientCity || "Không rõ", clientLat, clientLon] }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }).catch(e=>{});
 
         if (userMsgCountForSummary % 7 === 0) {
             setTimeout(() => {
@@ -2463,6 +2461,7 @@ function handleInputTyping() {
         wrapper.classList.add('error-shake');
         setTimeout(() => wrapper.classList.remove('error-shake'), 500);
         appendBotMsg(translations[currentLang].offlineMsg); chatContextHistory.pop();
+        fetch(GAS_API_URL, { method: 'POST', keepalive: true, body: JSON.stringify({ action: 'saveFullChatLog', args: [currentSessionId, combinedMessage, "LỖI MẠNG/TIMEOUT", clientCity || "Không rõ", clientLat, clientLon] }), headers: { 'Content-Type': 'text/plain;charset=utf-8' } }).catch(e=>{});
         inputField.disabled = false; sendBtn.disabled = false; sendBtn.innerText = translations[currentLang].sendBtn; 
     }).getBotResponse(currentSessionId, chatContextHistory, cmd, currentLang, clientContext, currentPersonalityName); 
     
@@ -2470,11 +2469,6 @@ function handleInputTyping() {
     const userUpdateId = Date.now();
     database.ref(`chats/${currentSessionId}/${userUpdateId}`).set({ sender: 'user', text: combinedMessage, timestamp: userUpdateId });
     database.ref(`status/${currentSessionId}`).update({ last_active: Date.now() });
-
-    
-    setTimeout(() => {
-        google.script.run.saveChatLogToSheet(currentSessionId, 'Khách', combinedMessage, clientCity || "Không biết", clientLat, clientLon, false);
-    }, 50);
 }
 
     function submitBooking() {
